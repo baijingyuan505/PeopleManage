@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/DDDProject2.iml" filepath="$PROJECT_DIR$/.idea/DDDProject2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/teledemo/eurekaserver/eurekaserver.iml" filepath="$PROJECT_DIR$/teledemo/eurekaserver/eurekaserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/teledemo/peoplemanage/peoplemanage.iml" filepath="$PROJECT_DIR$/teledemo/peoplemanage/peoplemanage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/teledemo/teledemo.iml" filepath="$PROJECT_DIR$/teledemo/teledemo.iml" />
+    </modules>
+  </component>
+</project>
