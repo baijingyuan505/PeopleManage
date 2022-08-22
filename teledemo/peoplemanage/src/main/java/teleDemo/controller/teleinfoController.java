@@ -22,8 +22,16 @@ public class teleinfoController {
 
     @GetMapping("/v1/comInfo")
     public GetVo gettbInfo(HttpServletRequest request){
-        int limit = Integer.valueOf(request.getParameter("limit"));
-        int page = Integer.valueOf(request.getParameter("page"));
+        int limit = 10;
+        int page = 1;
+        if (request.getParameter("limit") != null){
+            System.out.println("limit不为空");
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if(request.getParameter("page") != null)
+        {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
         int size = comInfoMapper.getAlltbINfo().size();
         List<tbInfo> tbInfos = comInfoMapper.gettbINfoByPage((page-1)*limit,limit);
         GetVo<tbInfo> getVo = new GetVo<>(0,"获取数据成功！",size,tbInfos);
@@ -32,8 +40,16 @@ public class teleinfoController {
 
     @GetMapping("/v1/userInfo")
     public GetVo gettbUSer(HttpServletRequest request){
-        int limit = Integer.valueOf(request.getParameter("limit"));
-        int page = Integer.valueOf(request.getParameter("page"));
+        int limit = 10;
+        int page = 1;
+        if (request.getParameter("limit") != null){
+            System.out.println("limit不为空");
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if(request.getParameter("page") != null)
+        {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
         int size = userInfoMapper.getAlltbUser().size();
         List<tbuser> tbInfos = userInfoMapper.gettbUserByPage((page-1)*limit,limit);
         GetVo<tbuser> getVo = new GetVo<>(0,"获取数据成功！",size,tbInfos);
