@@ -10,7 +10,7 @@ import teleDemo.entities.GetVo;
 import teleDemo.entities.tbInfo;
 import teleDemo.entities.tbuser;
 import teleDemo.mapper.*;
-import teleDemo.mapper.impl.userInfoImpl;
+import teleDemo.mapper.impl.userInfoMapperImpl;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class teleinfoController {
     userInfoMapper userInfoMapper;
 
     @Resource
-    userInfoImpl userInfoImpl;
+    userInfoMapperImpl userInfoImpl;
 
     @GetMapping("/v1/comInfo")
     public GetVo gettbInfo(HttpServletRequest request){
@@ -36,14 +36,14 @@ public class teleinfoController {
         {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        int size = comInfoMapper.getAlltbINfo().size();
+        int size = comInfoMapper.getTbInfoSize();
         List<tbInfo> tbInfos = comInfoMapper.gettbINfoByPage((page-1)*limit,limit);
         GetVo<tbInfo> getVo = new GetVo<>(0,"获取数据成功！",size,tbInfos);
         return  getVo;
     }
 
     @GetMapping("/v1/userInfo")
-    public GetVo gettbUSer(HttpServletRequest request){
+    public GetVo getAlltbUSer(HttpServletRequest request){
         int limit = 10;
         int page = 1;
         if (request.getParameter("limit") != null){
@@ -62,7 +62,7 @@ public class teleinfoController {
 
     @PostMapping("/v1/userInfo/query")
     @ResponseBody
-    public GetVo gettbUserByQuery(@Valid @RequestBody tbuser query, HttpServletRequest request)
+    public GetVo gettbUser(@Valid @RequestBody tbuser query, HttpServletRequest request)
     {
         int limit = 10;
         int page = 1;
@@ -79,4 +79,5 @@ public class teleinfoController {
         GetVo<tbuser> getVo = new GetVo<>(0,"获取数据成功！",size,tbUsers);
         return  getVo;
     }
+
 }

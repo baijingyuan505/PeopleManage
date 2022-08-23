@@ -9,7 +9,7 @@ import teleDemo.entities.tbuser;
 import teleDemo.mapper.userInfoMapper;
 import java.util.List;
 @Repository
-public class userInfoImpl implements userInfoMapper {
+public class userInfoMapperImpl implements userInfoMapper {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -34,6 +34,7 @@ public class userInfoImpl implements userInfoMapper {
         return null;
     }
 
+    //如果有100个Query项难道写100个if？  重写tbuser类的toString，得到tbuser的类变量名字符串，拆分出类变量名称数组，从而可以用循环来解决
     @Override
     public List<tbuser> gettbUserByQuery(int pageNum, int limit, tbuser query) {
         String sql = "select * from eqe.tb_user where 1=1";
