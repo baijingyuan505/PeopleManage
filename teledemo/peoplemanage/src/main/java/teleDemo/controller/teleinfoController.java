@@ -1,15 +1,16 @@
 package teleDemo.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import teleDemo.entities.GetVo;
 import teleDemo.entities.tbInfo;
 import teleDemo.entities.tbuser;
 import teleDemo.mapper.*;
+import teleDemo.mapper.impl.userInfoImpl;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class teleinfoController {
     comInfoMapper comInfoMapper;
     @Resource
     userInfoMapper userInfoMapper;
+
+    @Resource
+    userInfoImpl userInfoImpl;
 
     @GetMapping("/v1/comInfo")
     public GetVo gettbInfo(HttpServletRequest request){
@@ -51,8 +55,28 @@ public class teleinfoController {
             page = Integer.valueOf(request.getParameter("page"));
         }
         int size = userInfoMapper.getAlltbUser().size();
-        List<tbuser> tbInfos = userInfoMapper.gettbUserByPage((page-1)*limit,limit);
-        GetVo<tbuser> getVo = new GetVo<>(0,"获取数据成功！",size,tbInfos);
+        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page-1)*limit,limit);
+        GetVo<tbuser> getVo = new GetVo<>(0,"获取数据成功！",size,tbUsers);
+        return  getVo;
+    }
+
+    @PostMapping("/v1/userInfo/query")
+    @ResponseBody
+    public GetVo gettbUserByQuery(@Valid @RequestBody tbuser query, HttpServletRequest request)
+    {
+        int limit = 10;
+        int page = 1;
+        if (request.getParameter("limit") != null){
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if(request.getParameter("page") != null)
+        {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+
+        int size = userInfoMapper.getAlltbUser().size();
+        List<tbuser> tbUsers = userInfoImpl.gettbUserByQuery((page-1)*limit,limit,query);
+        GetVo<tbuser> getVo = new GetVo<>(0,"获取数据成功！",size,tbUsers);
         return  getVo;
     }
 }

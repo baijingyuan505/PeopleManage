@@ -2,7 +2,6 @@ package teleDemo.mapper;
 
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
-import teleDemo.entities.tbInfo;
 import teleDemo.entities.tbuser;
 
 import java.util.List;
@@ -20,4 +19,14 @@ public interface userInfoMapper {
     @Select("select * from eqe.tb_user limit #{pageNum}, #{limit};")
     @ResultMap(value = "tbUserMap")
     List<tbuser> gettbUserByPage(@Param("pageNum") int pageNum, @Param("limit")int limit);
+
+    @Select("select * from eqe.tb_user where phone_number=#{phoneNumber} limit #{pageNum}, #{limit};")
+    @ResultMap(value = "tbUserMap")
+    List<tbuser> gettbUserByPhoneNumber(@Param("phoneNumber") String phoneNumber,@Param("pageNum") int pageNum, @Param("limit")int limit);
+
+    @Select("select * from eqe.tb_user where status=#{status} limit #{pageNum}, #{limit};")
+    @ResultMap(value = "tbUserMap")
+    List<tbuser> gettbUserByStatus(@Param("status") String status,@Param("pageNum") int pageNum, @Param("limit")int limit);
+
+    List<tbuser> gettbUserByQuery(int pageNum, int limit, tbuser query);
 }
