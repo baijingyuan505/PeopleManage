@@ -1,0 +1,55 @@
+ /**
+     * 接口说明: 按页获取所有的人员轨迹信息
+     * 接口地址: /v1/getAllTbInfo
+     * 请求方式: GET
+     * 请求参数: limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+
+/**
+     * 接口说明: 按页获取所有的人员轨迹信息,实质是按页查询所有轨迹信息后只返回经度和纬度
+     * 接口地址: /v1/getLonAndLat
+     * 请求方式: GET
+     * 请求参数: llimit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+
+ /**
+     * 接口说明: 按页获取所有的人员信息
+     * 接口地址: /v1/getAllTbUser
+     * 请求方式: GET
+     * 请求参数: limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+
+/**
+     * 接口说明: 按页获取特定条件的人员信息，从一个tbuser类实例candidates中获取查询条件
+     * 接口地址: /v1/getTbUser
+     * 请求方式: POST
+     * 请求参数: candidates(tbuser类实例) , limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+
+/**
+     * 接口说明: 按id更新单个用户信息，最后返回当前页的所有用户的查询结果
+     * 接口地址: /v1/updateUserInfo
+     * 请求方式: POST
+     * 请求参数: userInfo(tbuser类实例), limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+
+/**
+     * 接口说明: 按id删除单个用户信息，最后返回当前页的所有用户的查询结果
+     * 接口地址: /v1/deleteUserInfo
+     * 请求方式: POST
+     * 请求参数: userInfo(tbuser类实例), limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+
+/**
+     * 接口说明: 增加单个用户信息，并返回当前页的所有用户信息的查询结果
+     * 接口地址: /v1/getAllTbInfo
+     * 请求方式: POST
+     * 请求参数: userInfo(tbuser类实例), limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
