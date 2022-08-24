@@ -11,87 +11,158 @@
     <link rel="stylesheet" href="./css/font.css">
     <link rel="stylesheet" href="./css/xadmin.css">
     <script type="text/javascript" src="./js/xadmin.js"></script>
-    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
 </head>
 
 <body>
-
-<!--    <form class="layui-form" action="">
-        <div class="layui-btn-group demoTable">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent1" onClick="return false">最近24小时</button>
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent2" onClick="return false">最近7天</button>
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent3" onClick="return false">最近1个月</button>
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent4" onClick="return false">最近6个月</button>
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent5" onClick="return false">最近1年</button>
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent6" onClick="return false">全部</button>
-        </div>
-    </form> -->
-
-    <table id="disasterPredictionTb" lay-filter="disasterPredictionTb"></table>
-    <div class="layui-card-header">
-        <!-- <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button> -->
-       <!-- <button class="layui-btn" onclick="xadmin.open('添加预测数据','./disasterPredictionInfo-add.html',1200,600)"><i class="layui-icon"></i>添加</button> -->
+<table id="disasterPredictionTb" lay-filter="disasterPredictionTb"></table>
+<div class="layui-card-header">
+</div>
+<div class="layui-row" id="popUpdateUserInfo" style="display:none;">
+    <div class="layui-col-md10">
+        <form class="layui-form layui-from-pane" action="" style="margin-top:20px" >
+            <label id="id_text" class="layui-form-label"></label>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select name="status" lay-filter="status">
+                        <option value="0">正常</option>
+                        <option value="1">确诊</option>
+                        <option value="2">密接</option>
+                        <option value="3">次密接</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin-top:40px">
+                <div class="layui-input-block">
+                    <button class="layui-btn  layui-btn-submit " lay-submit="" lay-filter="newData">确认修改</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
     </div>
-
-    <script type="text/html" id="barDemo">
-        <!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->
-        // <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-        // <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-    </script>
-    
-    <script src="./layui/layui.js" charset="utf-8"></script>
-    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
-    <script>
-layui.use('table', function(){
-  var table = layui.table;
-  
-  //第一个实例
- table.render({
-                                elem: '#disasterPredictionTb',
-                                url: 'http://localhost:10002/v1/userInfo',
-                                page: true,
-								toolbar: '#toolbarDemo',
-								defaultToolbar: ['filter', 'exports', 'print'],
-                                cols: [
-                                    [
-                                        //{type:'checkbox', fixed: 'left'},
-                                        {
-                                            field: 'id',
-                                            title: 'ID',
-                                            width: 350,
-                                            sort: true,
-                                            fixed: true
-                                        }, {
-                                            field: 'status',
-                                            title: '状态',
-                                            width: 180,
-                                            sort: true,
-                                            fixed: true,
-											templet:function(d){
-												if(d.status==0){
-													return '<span>正常</sapn>'
-												}else{
-													if(d.status==1){
-														return '<span>确诊</sapn>'
-													}else{
-													if(d.status==2){
-														return '<span>密接</sapn>'
-													}
-													return '<span>次密接</sapn>'
-												}
-												}
-											}
-                                        }, {
-                                            field: 'phoneNumber',
-                                            title: '电话号码',
-                                            width: 1000
-                                        }
-                                    ]
-                                ]
-                            });
-  
-});
-    </script>
+</div>
+<script type="text/html" id="OpBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script src="./layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        var $ = layui.jquery;
+        var form = layui.form
+        //实例一
+        table.render({
+            elem: '#disasterPredictionTb',
+            url: 'http://localhost:10002/v1/getAllTbUser',
+            method: 'GET',
+            parseData: function (res) {
+                console.log(res)
+                return {
+                    'code': 0, //接口状态
+                    'msg': res.msg, //提示文本
+                    'count': res.data.length, //数据长度
+                    'data': res.data //数据列表，是直接填充进表格中的数组
+                }
+            },
+            page: true,
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print'],
+            cols: [
+                [
+                    {
+                        field: 'id',
+                        title: 'ID',
+                        width: 300,
+                        sort: true,
+                        fixed: true
+                    },
+                    {
+                        field: 'status',
+                        title: '状态',
+                        width: 300,
+                        sort: true,
+                        fixed: true,
+                        templet:function(d){
+                            if(d.status==0){
+                                return '<span>正常</sapn>'
+                            }else{
+                                if(d.status==1){
+                                    return '<span>确诊</sapn>'
+                                }else{
+                                    if(d.status==2){
+                                        return '<span>密接</sapn>'
+                                    }
+                                    return '<span>次密接</sapn>'
+                                }
+                            }
+                        }
+                    },
+                    {
+                        field: 'phoneNumber',
+                        title: '电话号码',
+                        width: 500
+                    },
+                    {
+                        fixed: 'right',
+                        width:200,
+                        align:'center',
+                        toolbar: '#OpBar'
+                    }
+                ]
+            ]
+        });
+        table.on('tool(disasterPredictionTb)', function(obj){ // tool是工具条事件名，disasterPredictionTb是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+            if(layEvent === 'del'){ //删除
+                layer.confirm('确认删除该行吗', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    /*
+                        向服务端发送删除指令
+                    */
+                });
+            } else if(layEvent === 'edit'){ //编辑
+                console.log(data)
+                var d = document.getElementById('id_text');//获取id_text的节点
+                d.innerHTML = "ID:" + data.id
+                layer.open({
+                    type: 1,
+                    title: "人群信息修改",
+                    area: ['420px', '330px'],
+                    content: $("#popUpdateUserInfo"),
+                });
+                setFormValue(obj,data);
+            }
+        });
+        function setFormValue(obj,data){
+            form.on('submit(newData)', function(massage) {
+                // console.log(data)
+                // console.log(massage.field)
+                var newObj = new Object()
+                newObj.id = data.id
+                newObj.phoneNumber = data.phoneNumber
+                newObj.status = massage.field.status
+                var jsonObj = JSON.stringify({'id':data.id, phoneNumber: data.phoneNumber, status: massage.field.status})
+                console.log("ready to update")
+                $.ajax({
+                    url:'http://localhost:10002/v1/updateUserInfo',
+                    type:'POST',
+                    contentType: 'application/json;charset=utf-8',
+                    data:jsonObj,
+                    success:function (msg) {
+                        console.log("update finished")
+                        var returnCode = msg.returnCode;//取得返回数据（Sting类型的字符串）的信息进行取值判断
+                        console.log(msg)
+                        console.log(returnCode)
+                    }
+                })
+            })
+        }
+    });
+</script>
 </body>
 
 </html>
