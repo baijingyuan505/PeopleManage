@@ -36,19 +36,19 @@ public class userInfoMapperImpl implements userInfoMapper {
 
     //如果有100个Query项难道写100个if？  重写tbuser类的toString，得到tbuser的类变量名字符串，拆分出类变量名称数组，从而可以用循环来解决
     @Override
-    public List<tbuser> gettbUserByQuery(int pageNum, int limit, tbuser query) {
+    public List<tbuser> gettbUserByQuery(int pageNum, int limit, tbuser candidates) {
         String sql = "select * from eqe.tb_user where 1=1";
-        if(query!=null) {
-            if (query.getId() > 0) {
-                sql += " And id=" + query.getId();
+        if(candidates!=null) {
+            if (candidates.getId() > 0) {
+                sql += " And id=" + candidates.getId();
             }
 
-            if (query.getStatus() != null) {
-                sql += " And status=" + query.getStatus();
+            if (candidates.getStatus() != null) {
+                sql += " And status=" + candidates.getStatus();
             }
 
-            if (query.getPhoneNumber() != null) {
-                sql += " And phone_number=" + query.getPhoneNumber();
+            if (candidates.getPhoneNumber() != null) {
+                sql += " And phone_number=" + candidates.getPhoneNumber();
             }
         }
 

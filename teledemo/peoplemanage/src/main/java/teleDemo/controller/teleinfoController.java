@@ -47,41 +47,6 @@ public class teleinfoController {
         return getVo;
     }
 
-    @GetMapping("/v1/userInfo")
-    public GetVo getAllTbUSer(HttpServletRequest request) {
-        int limit = 100;
-        int page = 1;
-        if (request.getParameter("limit") != null) {
-            System.out.println("limit不为空");
-            limit = Integer.valueOf(request.getParameter("limit"));
-        }
-        if (request.getParameter("page") != null) {
-            page = Integer.valueOf(request.getParameter("page"));
-        }
-        int size = userInfoMapper.getAlltbUser().size();
-        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page - 1) * limit, limit);
-        GetVo<tbuser> getVo = new GetVo<>(0, "获取数据成功！", size, tbUsers);
-        return getVo;
-    }
-
-    @PostMapping("/v1/userInfo/query")
-    @ResponseBody
-    public GetVo gettbUser(@Valid @RequestBody tbuser query, HttpServletRequest request) {
-        int limit = 10;
-        int page = 1;
-        if (request.getParameter("limit") != null) {
-            limit = Integer.valueOf(request.getParameter("limit"));
-        }
-        if (request.getParameter("page") != null) {
-            page = Integer.valueOf(request.getParameter("page"));
-        }
-
-        int size = userInfoMapper.getAlltbUser().size();
-        List<tbuser> tbUsers = userInfoImpl.gettbUserByQuery((page - 1) * limit, limit, query);
-        GetVo<tbuser> getVo = new GetVo<>(0, "获取数据成功！", size, tbUsers);
-        return getVo;
-    }
-
     @GetMapping("/v1/lonAndLat")
     public Result getLonAndLat(HttpServletRequest request) {
         int limit = 100;
@@ -111,4 +76,45 @@ public class teleinfoController {
 
         return result;
     }
+
+
+
+    @GetMapping("/v1/userInfo")
+    public GetVo getAllTbUSer(HttpServletRequest request) {
+        int limit = 100;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            System.out.println("limit不为空");
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        int size = userInfoMapper.getAlltbUser().size();
+        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page - 1) * limit, limit);
+        GetVo<tbuser> getVo = new GetVo<>(0, "获取数据成功！", size, tbUsers);
+        return getVo;
+    }
+
+    @PostMapping("/v1/userInfo/query")
+    @ResponseBody
+    public GetVo gettbUser(@Valid @RequestBody tbuser candidates, HttpServletRequest request) {
+        int limit = 10;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+
+        int size = userInfoMapper.getAlltbUser().size();
+        List<tbuser> tbUsers = userInfoImpl.gettbUserByQuery((page - 1) * limit, limit, candidates);
+        GetVo<tbuser> getVo = new GetVo<>(0, "获取数据成功！", size, tbUsers);
+        return getVo;
+    }
+
+
+
+
 }
