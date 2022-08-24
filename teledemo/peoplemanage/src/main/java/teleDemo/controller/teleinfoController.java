@@ -1,5 +1,6 @@
 package teleDemo.controller;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -10,9 +11,13 @@ import teleDemo.entities.GetVo;
 import teleDemo.entities.tbInfo;
 import teleDemo.entities.tbuser;
 import teleDemo.mapper.*;
-import teleDemo.mapper.impl.userInfoImpl;
+import teleDemo.mapper.impl.userInfoMapperImpl;
 
+import java.sql.Struct;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class teleinfoController {
@@ -22,10 +27,10 @@ public class teleinfoController {
     userInfoMapper userInfoMapper;
 
     @Resource
-    userInfoImpl userInfoImpl;
+    userInfoMapperImpl userInfoImpl;
 
     @GetMapping("/v1/comInfo")
-    public GetVo gettbInfo(HttpServletRequest request){
+    public GetVo getAllTbInfo(HttpServletRequest request){
         int limit = 10;
         int page = 1;
         if (request.getParameter("limit") != null){
@@ -36,15 +41,15 @@ public class teleinfoController {
         {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        int size = comInfoMapper.getAlltbINfo().size();
+        int size = comInfoMapper.getTbInfoSize();
         List<tbInfo> tbInfos = comInfoMapper.gettbINfoByPage((page-1)*limit,limit);
         GetVo<tbInfo> getVo = new GetVo<>(0,"获取数据成功！",size,tbInfos);
         return  getVo;
     }
 
     @GetMapping("/v1/userInfo")
-    public GetVo gettbUSer(HttpServletRequest request){
-        int limit = 10;
+    public GetVo getAllTbUSer(HttpServletRequest request){
+        int limit = 100;
         int page = 1;
         if (request.getParameter("limit") != null){
             System.out.println("limit不为空");
@@ -62,7 +67,7 @@ public class teleinfoController {
 
     @PostMapping("/v1/userInfo/query")
     @ResponseBody
-    public GetVo gettbUserByQuery(@Valid @RequestBody tbuser query, HttpServletRequest request)
+    public GetVo gettbUser(@Valid @RequestBody tbuser query, HttpServletRequest request)
     {
         int limit = 10;
         int page = 1;
@@ -78,5 +83,39 @@ public class teleinfoController {
         List<tbuser> tbUsers = userInfoImpl.gettbUserByQuery((page-1)*limit,limit,query);
         GetVo<tbuser> getVo = new GetVo<>(0,"获取数据成功！",size,tbUsers);
         return  getVo;
+    }
+
+    @GetMapping("/v1/lonAndLat")
+    public String getLonAndLat(HttpServletRequest request)
+    {
+        int limit = 100;
+        int page = 1;
+        if (request.getParameter("limit") != null){
+            System.out.println("limit不为空");
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if(request.getParameter("page") != null)
+        {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        int size = userInfoMapper.getAlltbUser().size();
+        List<tbInfo> tbInfos = comInfoMapper.gettbINfoByPage((page-1)*limit,limit);
+
+        List<Map<String,Double>> points = new ArrayList<Map<String,Double>>();
+        for(int i =0;i<tbInfos.size();i++)
+        {
+            Map<String,Double> point = new HashMap<String,Double>();
+            point.put("lon",tbInfos.get(i).getLon());
+            point.put("lat",tbInfos.get(i).getLat());
+            points.add(point);
+        }
+
+
+        Map<String,Object> vo = new HashMap<>();
+        vo.put("code",0);
+        vo.put("msg","获取数据成功");
+        vo.put("data",points);
+
+        return JSONUtils.toJSONString(vo);
     }
 }

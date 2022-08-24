@@ -30,4 +30,6 @@ public interface comInfoMapper {
     @Select("select * from eqe.tb_info where net_speed!=null||net_speed!=0&&wifi_count!=0 order by date_time desc limit #{pageNum}, #{limit};")
     @ResultMap(value = "tbInfoMap")
     List<tbInfo> gettbINfoByPage(@Param("pageNum") int pageNum, @Param("limit")int limit);
+
+    int getTbInfoSize();
 }
