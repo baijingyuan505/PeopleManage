@@ -27,9 +27,17 @@ public class comInfoMapperImpl implements comInfoMapper {
     @Override
     public int getTbInfoSize() {
         String sql = "select count(*) from eqe.tb_info";
-        RowMapper<Integer> rowMapper = new BeanPropertyRowMapper<>(Integer.class);
-        List<Integer> counts = jdbcTemplate.query(sql,rowMapper);
-        return counts.get(0);
+        int count = 0;
+        try {
+            count = jdbcTemplate.queryForObject(sql, Integer.class);
+        }
+        catch (Exception e)
+        {
+            System.out.println("查询总数失败");
+        }
+        finally {
+            return count;
+        }
     }
 
 

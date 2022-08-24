@@ -28,5 +28,13 @@ public interface userInfoMapper {
     @ResultMap(value = "tbUserMap")
     List<tbuser> gettbUserByStatus(@Param("status") String status,@Param("pageNum") int pageNum, @Param("limit")int limit);
 
-    List<tbuser> gettbUserByQuery(int pageNum, int limit, tbuser query);
+    List<tbuser> getTbUserByCandidates(int pageNum, int limit, tbuser candidates);
+
+    int getTbUserSize();
+
+    void updateTbUser(tbuser tbUserInfo);
+
+    boolean deleteTbUser(tbuser tbUserInfo);
+
+    void insertTbUser(tbuser tbUserInfo);
 }
