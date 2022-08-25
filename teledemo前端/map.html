@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=UR1k4PEQGBqCWOTbxv0GcAPmfqM9ywFu
+"></script>
+    <script type="text/javascript" src="//api.map.baidu.com/library/TrackAnimation/src/TrackAnimation_min.js"></script>
+    <title>Title</title>
+    <script src="./js/jquery.min.js"></script>
+    <script>
+
+    </script>
+</head>
+
+<body>
+    <input type="text" value="1" id="id_query">
+    <input type="button" value="查询输入id用户的行动轨迹" onclick="query()">
+    <div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+    var map=new BMapGL.Map("allmap");
+    map.centerAndZoom(new BMapGL.Point(116.404,39.915),5);
+    map.enableScrollWheelZoom(true);
+
+
+    function query(){
+        var id=document.getElementById("id_query").value;
+        $.ajax({
+            url:"http://localhost:10002/v1/personTrace",
+            type:"POST",
+            data:{id:id},
+            success:function (info){
+                // var path = [{
+                //     'lng': 139.529693,
+                //     'lat': 35.657183
+                // }, {
+                //     'lng': 139.575460,
+                //     'lat': 35.726945
+                // }, {
+                //     'lng': 139.543786,
+                //     'lat': 35.659647
+                // }, {
+                //     'lng': 139.544134,
+                //     'lat': 35.657680
+                // }, {
+                //     'lng': 139.544035,
+                //     'lat': 35.653186
+                // }, {
+                //     'lng': 139.543839,
+                //     'lat': 35.658294
+                // }, {
+                //     'lng': 139.544147,
+                //     'lat': 35.659197
+                // }];
+                var path=[];
+                for(var i=0;i<info.length;i++){
+                    path.push({'lng':parseFloat(info[i].lon.toFixed(6)),'lat':parseFloat(info[i].lat.toFixed(6))});
+                    console.log(path[i].lng)
+                    console.log(typeof path[i].lng)
+                }
+                //alert(path[0].lng);
+                var point = [];
+                for (var i = 0; i < path.length; i++) {
+                    point.push(new BMapGL.Point(path[i].lng, path[i].lat));
+                    console.log(typeof path[i].lng)
+                }
+
+                // for(var i=0;i<info.length;i++){
+                //     point.push(new BMapGL.Point(info[i].lon.toFixed(6),info[i].lat.toFixed(6)))
+                // }
+                //point.push(new BMapGL.Point(116.404,39.915))
+                // for(var i=0;i<point.length;i++){
+                //     if(point[i].lat==0)
+                //         alert("yes");
+                // }
+                // alert(point[point.length-1].lat)
+                var pl=new BMapGL.Polyline(point);
+                var trackAni = new BMapGLLib.TrackAnimation(map, pl, {
+                    overallView: true, // 动画完成后自动调整视野到总览
+                    tilt: 30,          // 轨迹播放的角度，默认为55
+                    duration: 20000,   // 动画持续时长，默认为10000，单位ms
+                    delay: 3000        // 动画开始的延迟，默认0，单位ms
+                });
+                trackAni.start();
+                //trackAni.cancel();
+            },
+            error:function (){
+                alert("error")
+            },
+            dataType:"json"
+        });
+    }
+</script>
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+
+<!--<head>-->
+<!--    <meta charset="utf-8">-->
+<!--    <title>预测记录信息</title>-->
+<!--    <meta name="renderer" content="webkit">-->
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">-->
+<!--    <link rel="stylesheet" href="./layui/css/layui.css" media="all">-->
+<!--    <link rel="stylesheet" href="./css/font.css">-->
+<!--    <link rel="stylesheet" href="./css/xadmin.css">-->
+<!--    <script type="text/javascript" src="./js/xadmin.js"></script>-->
+<!--    &lt;!&ndash; 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 &ndash;&gt;-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--&lt;!&ndash;    <form class="layui-form" action="">-->
+<!--        <div class="layui-btn-group demoTable">-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent1" onClick="return false">最近24小时</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent2" onClick="return false">最近7天</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent3" onClick="return false">最近1个月</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent4" onClick="return false">最近6个月</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent5" onClick="return false">最近1年</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent6" onClick="return false">全部</button>-->
+<!--        </div>-->
+<!--    </form> &ndash;&gt;-->
+
+<!--<table id="disasterPredictionTb" lay-filter="disasterPredictionTb"></table>-->
+<!--<div class="layui-card-header">-->
+<!--    &lt;!&ndash; <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button> &ndash;&gt;-->
+<!--    &lt;!&ndash; <button class="layui-btn" onclick="xadmin.open('添加预测数据','./disasterPredictionInfo-add.html',1200,600)"><i class="layui-icon"></i>添加</button> &ndash;&gt;-->
+<!--</div>-->
+
+<!--<script type="text/html" id="barDemo">-->
+<!--    &lt;!&ndash; <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> &ndash;&gt;-->
+<!--    // <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+<!--    // <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+<!--</script>-->
+<!--<script type="text/html" id="pictureTpl">-->
+<!--    <a href="{{d.picture}}" target="_blank" class="layui-table-link">查看图片</a>-->
+<!--</script>-->
+<!--<script src="./layui/layui.js" charset="utf-8"></script>-->
+<!--&lt;!&ndash; 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 &ndash;&gt;-->
+<!--<script>-->
+<!--    layui.use('table', function(){-->
+<!--        var table = layui.table;-->
+
+<!--        //第一个实例-->
+<!--        table.render({-->
+<!--            elem: '#disasterPredictionTb',-->
+<!--            url: 'http://localhost:10002/v1/personTrace',-->
+<!--            page: true,-->
+<!--            toolbar: '#toolbarDemo',-->
+<!--            defaultToolbar: ['filter', 'exports', 'print'],-->
+<!--            cols: [-->
+<!--                [-->
+<!--                    //{type:'checkbox', fixed: 'left'},-->
+<!--                    {-->
+<!--                        field: 'date_time',-->
+<!--                        title: '时间',-->
+<!--                        width: 350,-->
+<!--                        sort: true,-->
+<!--                        fixed: true-->
+<!--                    }, {-->
+<!--                    field: 'lat',-->
+<!--                    title: '纬度',-->
+<!--                    width: 200-->
+<!--                }, {-->
+<!--                    field: 'lon',-->
+<!--                    title: '经度',-->
+<!--                    width: 200-->
+<!--                }-->
+<!--                ]-->
+<!--            ]-->
+<!--        });-->
+
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+
+<!--</html>-->
