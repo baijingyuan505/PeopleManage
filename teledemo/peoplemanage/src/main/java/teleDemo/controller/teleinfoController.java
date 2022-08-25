@@ -2,19 +2,20 @@ package teleDemo.controller;
 
 import com.google.gson.Gson;
 import com.alibaba.druid.support.json.JSONUtils;
+import net.sf.json.JSONArray;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import teleDemo.entities.GetVo;
-import teleDemo.entities.Result;
-import teleDemo.entities.tbInfo;
-import teleDemo.entities.tbuser;
+import teleDemo.entities.*;
 import teleDemo.mapper.*;
 import teleDemo.mapper.impl.userInfoMapperImpl;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -253,5 +254,35 @@ public class teleinfoController {
         return result;
     }
 
+    @Resource
+    personalTraceMapper personalTraceMapper;
+    @PostMapping("/v1/personTrace")
+    public void getPersonalTrace(HttpServletRequest request, HttpServletResponse response){
+        System.out.println("nihao");
+        int id=Integer.valueOf(request.getParameter("id"));
+        System.out.println(id);
+        List<Trace> trace = personalTraceMapper.getPersonalTrace(id);
+        List<Trace> dealedTrace=new ArrayList<>();
+        double lat=0;
+        double lon=0;
+        for(Trace i : trace){
+            if(i.getLat()!=lat&&i.getLon()!=lon){
+                lat=i.getLat();
+                lon=i.getLon();
+                System.out.println(lat+" "+lon);
+                dealedTrace.add(i);
+            }
+        }
+        System.out.println("呵呵呵呵");
+        PrintWriter writer=null;
+        try{
+            writer=response.getWriter();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        JSONArray data=JSONArray.fromObject(dealedTrace);
+        response.setCharacterEncoding("utf-8");
+        writer.append(data.toString());
 
+    }
 }
