@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import teleDemo.entities.*;
-import teleDemo.mapper.*;
-import teleDemo.mapper.impl.userInfoMapperImpl;
+import teleDemo.mapper.personalTraceMapper;
+import teleDemo.service.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,14 +23,12 @@ import java.util.Map;
 
 @RestController
 public class teleinfoController {
-    @Resource
-    comInfoMapper comInfoMapper;
-    @Resource
-    userInfoMapper userInfoMapper;
 
     @Resource
-    userInfoMapperImpl userInfoMapperImpl;
+    userInfoService userInfoService;
 
+    @Resource
+    comInfoService comInfoService;
     /**
      * 接口说明: 按页获取所有的人员轨迹信息
      * 接口地址: /v1/getAllTbInfo
@@ -49,7 +47,7 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        List<tbInfo> tbInfos = comInfoMapper.gettbINfoByPage((page - 1) * limit, limit);
+        List<tbInfo> tbInfos = comInfoService.getTbINfoByPage((page - 1) * limit, limit);
 
         if (null == tbInfos) {
             Result result = Result.createFailureResult("查询所有轨迹信息失败");
@@ -61,14 +59,104 @@ public class teleinfoController {
     }
 
     /**
+     * 接口说明: 按页获取所有的人员轨迹信息,实质是按页查询所有轨迹信息后只返回经度和纬度，如不传入分页信息则获取所有
+     * 接口地址: /v1/getAllLonAndLat
+     * 请求方式: GET
+     * 请求参数: limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+    @GetMapping("/v1/getAllLonAndLat")
+    public Result getAllLonAndLat(HttpServletRequest request) {
+        Result result;
+        int limit = 100;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        List<Map<String,Object>> points = comInfoService.getAllLonAndLat((page - 1) * limit,limit);
+
+        if(null == points){
+            result = Result.createFailureResult("分页获取所有经纬度信息失败");
+        }
+        else {
+            result = Result.createSuccessResult(points);
+        }
+        return result;
+    }
+
+    /**
+     * 接口说明: 按页获取所有的人员轨迹信息,实质是按页查询所有轨迹信息后只返回经度和纬度
+     * 接口地址: /v1/getLonAndLatById
+     * 请求方式: POST
+     * 请求参数: tbInfo类实例(确保id有效即可), limit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+    @PostMapping("/v1/getLonAndLatById")
+    @ResponseBody
+    public Result getLonAndLatById(@Valid @RequestBody tbInfo tbInfo,HttpServletRequest request) {
+        Result result;
+        int limit = 100;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        Map<String,Object> point = comInfoService.getLonAndLatById(tbInfo.getId());
+
+        if(null == point){
+            result = Result.createFailureResult("获取指定id的经纬度信息失败");
+        }
+        else {
+            result = Result.createSuccessResult(point);
+        }
+        return result;
+    }
+
+    /**
+     *
+     * POST
+     * @param tbInfo
+     * @param request
+     * @return
+     */
+    @PostMapping("/v1/getLonAndLatByTbUserId")
+    @ResponseBody
+    public Result getLonAndLatByTbUserId(@Valid @RequestBody tbInfo tbInfo,HttpServletRequest request) {
+        Result result;
+        int limit = 100;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        List<Map<String,Object>> points = comInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(),(page - 1) * limit,limit);
+
+        if(null == points){
+            result = Result.createFailureResult("分页获取指定用户id的经纬度信息失败");
+        }
+        else {
+            result = Result.createSuccessResult(points);
+        }
+        return result;
+    }
+    /**
      * 接口说明: 按页获取所有的人员轨迹信息,实质是按页查询所有轨迹信息后只返回经度和纬度
      * 接口地址: /v1/getLonAndLat
-     * 请求方式: GET
+     * 请求方式: POST
      * 请求参数: llimit, page (一页显示limit条，查看第page页)
      * 返回参数: Result
      */
-    @GetMapping("/v1/getLonAndLat")
-    public Result getLonAndLat(HttpServletRequest request) {
+    @PostMapping("/v1/getLonAndLatByDateTime")
+    @ResponseBody
+    public Result getLonAndLatByDateTime(@Valid @RequestBody tbInfo tbInfo,HttpServletRequest request) {
+        Result result;
         int limit = 100;
         int page = 1;
         if (request.getParameter("limit") != null) {
@@ -78,25 +166,47 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        List<tbInfo> tbInfos = comInfoMapper.gettbINfoByPage((page - 1) * limit, limit);
+        List<Map<String,Object>> points = comInfoService.getLonAndLatByDateTime(tbInfo.getDateTime().toString(),(page - 1) * limit,limit);
 
-        if (null == tbInfos) {
-            Result result = Result.createFailureResult("查询经纬度信息失败");
-            return result;
+        if(null == points){
+            result = Result.createFailureResult("分页获取指定日期之前的经纬度信息失败");
         }
-        List<Map<String, Double>> points = new ArrayList<Map<String, Double>>();
-        for (int i = 0; i < tbInfos.size(); i++) {
-            Map<String, Double> point = new HashMap<String, Double>();
-            point.put("lon", tbInfos.get(i).getLon());
-            point.put("lat", tbInfos.get(i).getLat());
-            points.add(point);
+        else {
+            result = Result.createSuccessResult(points);
         }
-        Result result = Result.createSuccessResult(JSONUtils.toJSONString(points));
-
         return result;
     }
 
+    /**
+     * 接口说明: 按页获取所有的人员轨迹信息,实质是按页查询所有轨迹信息后只返回经度和纬度
+     * 接口地址: /v1/getLonAndLat
+     * 请求方式: GET
+     * 请求参数: llimit, page (一页显示limit条，查看第page页)
+     * 返回参数: Result
+     */
+    @PostMapping("/v1/getLonAndLatById")
+    @ResponseBody
+    public Result getLonAndLatByLac(@Valid @RequestBody tbInfo tbInfo,HttpServletRequest request) {
+        Result result;
+        int limit = 100;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            System.out.println("limit不为空");
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        List<Map<String,Object>> points = comInfoService.getLonAndLatByLac(tbInfo.getLac(),(page - 1) * limit,limit);
 
+        if(null == points){
+            result = Result.createFailureResult("分页获取指定地区编码的经纬度信息失败");
+        }
+        else {
+            result = Result.createSuccessResult(points);
+        }
+        return result;
+    }
     /**
      * 接口说明: 按页获取所有的人员信息
      * 接口地址: /v1/getAllTbUser
@@ -115,8 +225,8 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        int size = userInfoMapperImpl.getTbUserSize();
-        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page - 1) * limit, limit);
+        int size = userInfoService.getTbUserSize();
+        List<tbuser> tbUsers = userInfoService.getTbUserByPage((page - 1) * limit, limit);
 
 
         if (null == tbUsers) {
@@ -147,8 +257,8 @@ public class teleinfoController {
             page = Integer.valueOf(request.getParameter("page"));
         }
 
-        int size = userInfoMapperImpl.getTbUserSize();
-        List<tbuser> tbUsers = userInfoMapperImpl.getTbUserByCandidates((page - 1) * limit, limit, candidates);
+        int size = userInfoService.getTbUserSize();
+        List<tbuser> tbUsers = userInfoService.getTbUserByCandidates((page - 1) * limit, limit, candidates);
         if (null == tbUsers) {
             Result result = Result.createFailureResult("所有用户查询失败");
             return result;
@@ -176,14 +286,14 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        int size = userInfoMapper.getAlltbUser().size();
+        int size = userInfoService.getAlltbUser().size();
 
         //更新操作
-        userInfoMapperImpl.updateTbUser(userInfo);
+        userInfoService.updateTbUser(userInfo);
 
 
         //返回当前查询页的数据
-        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page - 1) * limit, limit);
+        List<tbuser> tbUsers = userInfoService.getTbUserByPage((page - 1) * limit, limit);
         if (null == tbUsers) {
             Result result = Result.createFailureResult("所有用户查询失败");
             return result;
@@ -212,9 +322,9 @@ public class teleinfoController {
             page = Integer.valueOf(request.getParameter("page"));
         }
 
-        userInfoMapperImpl.deleteTbUser(userInfo);
+        userInfoService.deleteTbUser(userInfo.getId());
 
-        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page - 1) * limit, limit);
+        List<tbuser> tbUsers = userInfoService.getTbUserByPage((page - 1) * limit, limit);
         if (null == tbUsers) {
             Result result = Result.createFailureResult("所有用户查询失败");
             return result;
@@ -243,9 +353,9 @@ public class teleinfoController {
             page = Integer.valueOf(request.getParameter("page"));
         }
 
-        userInfoMapperImpl.insertTbUser(userInfo);
+        userInfoService.insertTbUser(userInfo);
 
-        List<tbuser> tbUsers = userInfoMapper.gettbUserByPage((page - 1) * limit, limit);
+        List<tbuser> tbUsers = userInfoService.getTbUserByPage((page - 1) * limit, limit);
         if (null == tbUsers) {
             Result result = Result.createFailureResult("所有用户查询失败");
             return result;
@@ -255,7 +365,7 @@ public class teleinfoController {
     }
 
     @Resource
-    personalTraceMapper personalTraceMapper;
+    teleDemo.mapper.personalTraceMapper personalTraceMapper;
     @PostMapping("/v1/personTrace")
     public void getPersonalTrace(HttpServletRequest request, HttpServletResponse response){
         System.out.println("nihao");
