@@ -7,23 +7,24 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class tbInfo implements Serializable{
-    private int id;
-    private int asu;
+public class TbInfo implements Serializable{
+    private Integer id;
+    private Integer asu;
     private String cid;
     private Date dateTime;
-    private int dbm;
+    private Integer dbm;
     private String lac;
     private double lat;
     private double lon;
-    private int userId;
+    private Integer userId;
     private String netSpeed;
-    private  int unreadSms;
-    private  int wifiCount;
+    private  Integer unreadSms;
+    private  Integer wifiCount;
     private String wifiInfo;
 }

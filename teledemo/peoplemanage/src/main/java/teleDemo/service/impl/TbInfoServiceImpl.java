@@ -1,65 +1,63 @@
 package teleDemo.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import teleDemo.entities.Result;
-import teleDemo.entities.tbInfo;
-import teleDemo.mapper.comInfoMapper;
-import teleDemo.service.comInfoService;
+import org.springframework.stereotype.Service;
+import teleDemo.entities.TbInfo;
+import teleDemo.dao.TbInfoDao;
+import teleDemo.service.TbInfoService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class comInfoServiceImpl implements comInfoService {
+@Service
+public class TbInfoServiceImpl implements TbInfoService {
     @Autowired
-    comInfoMapper comInfoMapper;
-    @Override
-    public List<tbInfo> getAlltbINfo() {
-        return comInfoMapper.getAlltbINfo();
-    }
+    TbInfoDao tbInfoDao;
 
     @Override
-    public List<tbInfo> getTbINfoByPage(int pageNum, int limit) {
-        return comInfoMapper.getTbINfoByPage(pageNum,limit);
+    public List<TbInfo> getAllTbInfo(int pageNum, int limit) {
+        return tbInfoDao.getAllTbInfo(pageNum, limit);
     }
+
 
     @Override
     public int getTbInfoSize() {
-        return comInfoMapper.getTbInfoSize();
+        return tbInfoDao.getTbInfoSize();
     }
 
     @Override
-    public tbInfo getTbInfoById(int id) {
-        return comInfoMapper.getTbInfoById(id);
+    public TbInfo getTbInfoById(int id) {
+        return tbInfoDao.getTbInfoById(id);
     }
 
     @Override
-    public List<tbInfo> getTbInfoByTbUserId(int userId, int pageNum, int limit) {
-        return comInfoMapper.getTbInfoByTbUserId(userId,pageNum,limit);
+    public List<TbInfo> getTbInfoByTbUserId(int userId, int pageNum, int limit) {
+        return tbInfoDao.getTbInfoByTbUserId(userId, pageNum, limit);
     }
 
     @Override
-    public List<tbInfo> getTbInfoByDateTime(String dateTime, int pageNum, int limit) {
-        return comInfoMapper.getTbInfoByDateTime(dateTime,pageNum,limit);
+    public List<TbInfo> getTbInfoByDateTime(String dateTime, int pageNum, int limit) {
+        return tbInfoDao.getTbInfoByDateTime(dateTime, pageNum, limit);
     }
 
     @Override
-    public List<tbInfo> getTbInfoByLac(String lac, int pageNum, int limit) {
-        return comInfoMapper.getTbInfoByLac(lac,pageNum,limit);
+    public List<TbInfo> getTbInfoByLac(String lac, int pageNum, int limit) {
+        return tbInfoDao.getTbInfoByLac(lac, pageNum, limit);
     }
 
     @Override
-    public List<Map<String, Object>> getAllLonAndLat(int pageNum,int limit) {
+    public List<Map<String, Object>> getAllLonAndLat(int pageNum, int limit) {
         List<Map<String, Object>> points = new ArrayList<>();
 
-        List<tbInfo> tbInfos = comInfoMapper.getTbINfoByPage(pageNum, limit);
+        List<TbInfo> tbInfos = tbInfoDao.getAllTbInfo(pageNum, limit);
         if (null == tbInfos) {
             return null;
         }
-        Map<String, Object> point = new HashMap<>();
         for (int i = 0; i < tbInfos.size(); i++) {
-            point.put("date_time",tbInfos.get(i).getDateTime());
+            Map<String, Object> point = new HashMap<>();
+            point.put("date_time", tbInfos.get(i).getDateTime());
             point.put("lon", tbInfos.get(i).getLon());
             point.put("lat", tbInfos.get(i).getLat());
             points.add(point);
@@ -69,17 +67,15 @@ public class comInfoServiceImpl implements comInfoService {
 
     @Override
     public Map<String, Object> getLonAndLatById(int id) {
-        Map<String,Object> point = new HashMap<>();
+        Map<String, Object> point = new HashMap<>();
 
-        tbInfo tbInfo = comInfoMapper.getTbInfoById(id);
-        if(null == tbInfo)
-        {
+        TbInfo TbInfo = tbInfoDao.getTbInfoById(id);
+        if (null == TbInfo) {
             return null;
         }
-
-        point.put("date_time",tbInfo.getDateTime());
-        point.put("lon", tbInfo.getLon());
-        point.put("lat", tbInfo.getLat());
+        point.put("date_time", TbInfo.getDateTime());
+        point.put("lon", TbInfo.getLon());
+        point.put("lat", TbInfo.getLat());
         return point;
     }
 
@@ -87,13 +83,13 @@ public class comInfoServiceImpl implements comInfoService {
     public List<Map<String, Object>> getLonAndLatByTbUserId(int tbUserId, int pageNum, int limit) {
         List<Map<String, Object>> points = new ArrayList<>();
 
-        List<tbInfo> tbInfos = comInfoMapper.getTbInfoByTbUserId(tbUserId, pageNum, limit);
+        List<TbInfo> tbInfos = tbInfoDao.getTbInfoByTbUserId(tbUserId, pageNum, limit);
         if (null == tbInfos) {
             return null;
         }
         Map<String, Object> point = new HashMap<>();
         for (int i = 0; i < tbInfos.size(); i++) {
-            point.put("date_time",tbInfos.get(i).getDateTime());
+            point.put("date_time", tbInfos.get(i).getDateTime());
             point.put("lon", tbInfos.get(i).getLon());
             point.put("lat", tbInfos.get(i).getLat());
             points.add(point);
@@ -105,13 +101,13 @@ public class comInfoServiceImpl implements comInfoService {
     public List<Map<String, Object>> getLonAndLatByDateTime(String dateTime, int pageNum, int limit) {
         List<Map<String, Object>> points = new ArrayList<>();
 
-        List<tbInfo> tbInfos = comInfoMapper.getTbInfoByDateTime(dateTime, pageNum, limit);
+        List<TbInfo> tbInfos = tbInfoDao.getTbInfoByDateTime(dateTime, pageNum, limit);
         if (null == tbInfos) {
             return null;
         }
-        Map<String, Object> point = new HashMap<>();
         for (int i = 0; i < tbInfos.size(); i++) {
-            point.put("date_time",tbInfos.get(i).getDateTime());
+            Map<String, Object> point = new HashMap<>();
+            point.put("date_time", tbInfos.get(i).getDateTime());
             point.put("lon", tbInfos.get(i).getLon());
             point.put("lat", tbInfos.get(i).getLat());
             points.add(point);
@@ -123,13 +119,13 @@ public class comInfoServiceImpl implements comInfoService {
     public List<Map<String, Object>> getLonAndLatByLac(String lac, int pageNum, int limit) {
         List<Map<String, Object>> points = new ArrayList<>();
 
-        List<tbInfo> tbInfos = comInfoMapper.getTbInfoByLac(lac, pageNum, limit);
+        List<TbInfo> tbInfos = tbInfoDao.getTbInfoByLac(lac, pageNum, limit);
         if (null == tbInfos) {
             return null;
         }
-        Map<String, Object> point = new HashMap<>();
         for (int i = 0; i < tbInfos.size(); i++) {
-            point.put("date_time",tbInfos.get(i).getDateTime());
+            Map<String, Object> point = new HashMap<>();
+            point.put("date_time", tbInfos.get(i).getDateTime());
             point.put("lon", tbInfos.get(i).getLon());
             point.put("lat", tbInfos.get(i).getLat());
             points.add(point);

@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class tbuser implements Serializable {
-    private int id;
+public class TbUser implements Serializable {
+    private Integer id;
     private String phoneNumber;
     private String status;
 }

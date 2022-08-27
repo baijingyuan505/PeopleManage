@@ -1,39 +1,45 @@
-package teleDemo.mapper.impl;
+package teleDemo.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import teleDemo.entities.tbInfo;
-import teleDemo.entities.tbuser;
-import teleDemo.mapper.comInfoMapper;
+import org.springframework.stereotype.Repository;
+import teleDemo.dao.TbInfoDao;
+import teleDemo.entities.TbInfo;
 
 import java.util.List;
 
-public class comInfoMapperImpl implements comInfoMapper {
+@Repository
+public class TbInfoDaoImpl implements TbInfoDao {
+
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    /**
-     * 不分页获取所有轨迹信息，由MyBatis注解实现
-     *
-     * @return List<tbInfo>
-     */
-    @Override
-    public List<tbInfo> getAlltbINfo() {
-        return null;
-    }
 
     /**
-     * 分页获取所有轨迹信息，由MyBatis注解实现
+     * 分页获取所有轨迹信息
      *
      * @param pageNum
      * @param limit
-     * @return List<tbInfo>
+     * @return
      */
     @Override
-    public List<tbInfo> getTbINfoByPage(int pageNum, int limit) {
-        return null;
+    public List<TbInfo> getAllTbInfo(int pageNum, int limit) {
+        String sql = "SELECT * FROM eqe.tb_info";
+        if (0 <= pageNum && limit > 0) {
+            //只进行有效的分页查询
+            sql += " limit " + pageNum + ", " + limit;
+        }
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
+
+        try {
+            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper);
+            return TbInfos;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -47,8 +53,6 @@ public class comInfoMapperImpl implements comInfoMapper {
         int count = 0;
         try {
             count = jdbcTemplate.queryForObject(sql, Integer.class);
-        } catch (Exception e) {
-            System.out.println("查询轨迹信息总数失败: " + e);
         } finally {
             return count;
         }
@@ -58,20 +62,20 @@ public class comInfoMapperImpl implements comInfoMapper {
      * 获取指定id的某条轨迹信息
      *
      * @param id
-     * @return tbInfo(tbInfo类实例)
+     * @return TbInfo(TbInfo类实例)
      */
     @Override
-    public tbInfo getTbInfoById(int id) {
+    public TbInfo getTbInfoById(int id) {
         String sql = "SELECT * FROM eqe.tb_info where id = ?";
-        RowMapper<tbInfo> rowMapper = new BeanPropertyRowMapper<>(tbInfo.class);
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
 
         try {
-            tbInfo tbInfo = jdbcTemplate.queryForObject(sql, rowMapper, id);
-            return tbInfo;
+            TbInfo TbInfo = jdbcTemplate.queryForObject(sql, rowMapper, id);
+            return TbInfo;
         } catch (Exception e) {
-            System.out.println("获取指定id的轨迹信息失败: " + e);
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -80,24 +84,24 @@ public class comInfoMapperImpl implements comInfoMapper {
      * @param userId
      * @param pageNum
      * @param limit
-     * @return tbInfos(tbInfo类链表)
+     * @return TbInfos(TbInfo类链表)
      */
     @Override
-    public List<tbInfo> getTbInfoByTbUserId(int userId, int pageNum, int limit) {
+    public List<TbInfo> getTbInfoByTbUserId(int userId, int pageNum, int limit) {
         String sql = "SELECT * FROM eqe.tb_info where user_id = ?";
         if (0 <= pageNum && limit > 0) {
             //只进行有效的分页查询
             sql += " limit " + pageNum + ", " + limit;
         }
-        RowMapper<tbInfo> rowMapper = new BeanPropertyRowMapper<>(tbInfo.class);
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
 
         try {
-            List<tbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper, userId);
-            return tbInfos;
+            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper, userId);
+            return TbInfos;
         } catch (Exception e) {
-            System.out.println("按用户id查询轨迹信息失败: " + e);
+            return null;
         }
-        return null;
+
     }
 
     /**
@@ -106,49 +110,45 @@ public class comInfoMapperImpl implements comInfoMapper {
      * @param dateTime e.g.: "2019-05-21 20:50:52"
      * @param pageNum
      * @param limit
-     * @return tbInfos(tbInfo类链表)
+     * @return TbInfos(TbInfo类链表)
      */
     @Override
-    public List<tbInfo> getTbInfoByDateTime(String dateTime, int pageNum, int limit) {
+    public List<TbInfo> getTbInfoByDateTime(String dateTime, int pageNum, int limit) {
         String sql = "SELECT * FROM eqe.tb_info where date_time<= ?";
         if (0 <= pageNum && limit > 0) {
             //只进行有效的分页查询
             sql += " limit " + pageNum + ", " + limit;
         }
-        RowMapper<tbInfo> rowMapper = new BeanPropertyRowMapper<>(tbInfo.class);
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
         try {
-            List<tbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper, dateTime);
-            return tbInfos;
+            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper, dateTime);
+            return TbInfos;
         } catch (Exception e) {
-            System.out.println("获取指定日期之前的轨迹信息失败: " + e);
+            return null;
         }
-        return null;
     }
 
     /**
      * 分页获取指定区域编码的所有轨迹信息
      *
-     * @param lac   e.g. "4157"
+     * @param lac     e.g. "4157"
      * @param pageNum
      * @param limit
-     * @return tbInfos(tbInfo类链表)
+     * @return TbInfos(TbInfo类链表)
      */
     @Override
-    public List<tbInfo> getTbInfoByLac(String lac, int pageNum, int limit) {
+    public List<TbInfo> getTbInfoByLac(String lac, int pageNum, int limit) {
         String sql = "SELECT * FROM eqe.tb_info where lac = ?";
         if (0 <= pageNum && limit > 0) {
             //只进行有效的分页查询
             sql += " limit " + pageNum + ", " + limit;
         }
-        RowMapper<tbInfo> rowMapper = new BeanPropertyRowMapper<>(tbInfo.class);
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
         try {
-            List<tbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper, lac);
-            return tbInfos;
+            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper, lac);
+            return TbInfos;
         } catch (Exception e) {
-            System.out.println("获取指定区域编码的轨迹信息失败: " + e);
+            return null;
         }
-        return null;
     }
-
-
 }
