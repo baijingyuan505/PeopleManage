@@ -17,7 +17,7 @@
 <table id="disasterPredictionTb" lay-filter="disasterPredictionTb"></table>
 <div class="layui-card-header">
 </div>
-<div class="layui-row" id="popUpdateUserInfo" style="display:none;">
+<div class="layui-row" id="popUpdateTbUser" style="display:none;">
     <div class="layui-col-md10">
         <form class="layui-form layui-from-pane" action="" style="margin-top:20px" >
             <label id="id_text" class="layui-form-label"></label>
@@ -141,7 +141,7 @@
                     type: 1,
                     title: "人群信息修改",
                     area: ['420px', '330px'],
-                    content: $("#popUpdateUserInfo"),
+                    content: $("#popUpdateTbUser"),
                 });
                 setFormValue(obj,data);
             }
@@ -157,7 +157,7 @@
                 var jsonObj = JSON.stringify({'id':data.id, phoneNumber: data.phoneNumber, status: massage.field.status})
                 console.log("ready to update")
                 $.ajax({
-                    url:'http://localhost:10002/v1/updateUserInfo',
+                    url:'http://localhost:10002/v1/updateTbUser',
                     type:'POST',
                     contentType: 'application/json;charset=utf-8',
                     data:jsonObj,
