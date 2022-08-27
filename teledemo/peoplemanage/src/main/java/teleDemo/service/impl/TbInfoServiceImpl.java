@@ -6,10 +6,9 @@ import teleDemo.entities.TbInfo;
 import teleDemo.dao.TbInfoDao;
 import teleDemo.service.TbInfoService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class TbInfoServiceImpl implements TbInfoService {
@@ -39,6 +38,10 @@ public class TbInfoServiceImpl implements TbInfoService {
 
     @Override
     public List<TbInfo> getTbInfoByDateTime(String dateTime, int pageNum, int limit) {
+        if (!checkDateTime(dateTime)) {
+            //传入时间错误，返回默认结果
+            return getAllTbInfo(pageNum, limit);
+        }
         return tbInfoDao.getTbInfoByDateTime(dateTime, pageNum, limit);
     }
 
@@ -100,7 +103,10 @@ public class TbInfoServiceImpl implements TbInfoService {
     @Override
     public List<Map<String, Object>> getLonAndLatByDateTime(String dateTime, int pageNum, int limit) {
         List<Map<String, Object>> points = new ArrayList<>();
-
+        if (!checkDateTime(dateTime)) {
+            //传入时间错误，返回默认结果
+            return getAllLonAndLat(pageNum, limit);
+        }
         List<TbInfo> tbInfos = tbInfoDao.getTbInfoByDateTime(dateTime, pageNum, limit);
         if (null == tbInfos) {
             return null;
@@ -131,5 +137,16 @@ public class TbInfoServiceImpl implements TbInfoService {
             points.add(point);
         }
         return points;
+    }
+
+    @Override
+    public boolean checkDateTime(String dateTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            sdf.parse(dateTime);
+            return true;
+        } catch (ParseException pe) {
+            return false;
+        }
     }
 }

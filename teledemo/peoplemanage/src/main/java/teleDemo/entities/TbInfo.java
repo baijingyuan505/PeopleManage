@@ -17,7 +17,7 @@ public class TbInfo implements Serializable{
     private Integer id;
     private Integer asu;
     private String cid;
-    private Date dateTime;
+    private String dateTime;
     private Integer dbm;
     private String lac;
     private double lat;
