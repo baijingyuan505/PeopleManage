@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import teleDemo.dao.TbInfoDao;
 import teleDemo.entities.TbInfo;
+import teleDemo.entities.TbUser;
 
 import java.util.List;
 
@@ -41,22 +42,7 @@ public class TbInfoDaoImpl implements TbInfoDao {
             return null;
         }
     }
-
-    /**
-     * 获取tb_info表中的数据总数量
-     *
-     * @return count(总数量, 可能为0, 作为除数需要判断)
-     */
-    @Override
-    public int getTbInfoSize() {
-        String sql = "select count(*) from eqe.tb_info";
-        int count = 0;
-        try {
-            count = jdbcTemplate.queryForObject(sql, Integer.class);
-        } finally {
-            return count;
-        }
-    }
+    
 
     /**
      * 获取指定id的某条轨迹信息
@@ -149,6 +135,58 @@ public class TbInfoDaoImpl implements TbInfoDao {
             return TbInfos;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * 获取tb_info表中的数据总数量
+     *
+     * @return count(总数量, 可能为0, 作为除数需要判断)
+     */
+    @Override
+    public int getTbInfoSize() {
+        String sql = "select count(*) from eqe.tb_info";
+        int count = 0;
+        try {
+            count = jdbcTemplate.queryForObject(sql, Integer.class);
+        } finally {
+            return count;
+        }
+    }
+
+    @Override
+    public void updateTbInfo(TbInfo tbInfo) {
+        String sql = "update `eqe`.`tb_info` set `asu`=?, `cid`=?, `date_time`=?, `dbm`=?, `lac`=?, `lat`=?, `lon`=?, `user_id`=?, `net_speed`=?, `unread_sms`=?, `wifi_count`=?, `wifi_info`=? where id = ?";
+        try {
+            jdbcTemplate.update(sql, tbInfo.getAsu(), tbInfo.getCid(),tbInfo.getDateTime(),tbInfo.getDbm(),tbInfo.getLac(),tbInfo.getLat(),tbInfo.getLon(),tbInfo.getUserId(),tbInfo.getNetSpeed(),tbInfo.getUnreadSms(),tbInfo.getWifiCount(),tbInfo.getWifiInfo(),tbInfo.getId());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public boolean deleteTbInfo(int id) {
+        String sql = "delete from eqe.tb_info where id = ?";
+        int number = 0;
+        try {
+            number = jdbcTemplate.update(sql, id);
+        } catch (Exception e) {
+            return false;
+        }
+        if (0 != number) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void insertTbInfo(TbInfo tbInfo) {
+        String sql = "INSERT INTO `eqe`.`tb_info` (`id`, `asu`, `cid`, `date_time`, `dbm`, `lac`, `lat`, `lon`, `user_id`, `net_speed`, `unread_sms`, `wifi_count`, `wifi_info`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            jdbcTemplate.update(sql, tbInfo.getId(), tbInfo.getAsu(), tbInfo.getCid(),tbInfo.getDateTime(),tbInfo.getDbm(),tbInfo.getLac(),tbInfo.getLat(),tbInfo.getLon(),tbInfo.getUserId(),tbInfo.getNetSpeed(),tbInfo.getUnreadSms(),tbInfo.getWifiCount(),tbInfo.getWifiInfo());
+        } catch (Exception e) {
+            throw e;
         }
     }
 }

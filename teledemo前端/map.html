@@ -24,7 +24,7 @@
 </head>
 
 <body>
-    <input type="text" value="1" id="id_query">
+    <input type="text" value="1" id="userid_query">
     <input type="button" value="查询输入id用户的行动轨迹" onclick="query()">
     <div id="allmap"></div>
 </body>
@@ -36,56 +36,37 @@
 
 
     function query(){
-        var id=document.getElementById("id_query").value;
+        var userid=document.getElementById("userid_query").value;
         $.ajax({
-            url:"http://localhost:10002/v1/personTrace",
-            type:"POST",
-            data:{id:id},
-            success:function (info){
-                // var path = [{
-                //     'lng': 139.529693,
-                //     'lat': 35.657183
-                // }, {
-                //     'lng': 139.575460,
-                //     'lat': 35.726945
-                // }, {
-                //     'lng': 139.543786,
-                //     'lat': 35.659647
-                // }, {
-                //     'lng': 139.544134,
-                //     'lat': 35.657680
-                // }, {
-                //     'lng': 139.544035,
-                //     'lat': 35.653186
-                // }, {
-                //     'lng': 139.543839,
-                //     'lat': 35.658294
-                // }, {
-                //     'lng': 139.544147,
-                //     'lat': 35.659197
-                // }];
+            url: "http://localhost:10002/v1/getLonAndLatByTbUserId",
+            type: "POST",
+            data: JSON.stringify({"userId": userid}),
+            contentType: "application/json",
+            dataType: "json",
+            success:function (result){
+                /*
+                   var path = [{
+                                    "date_time": "2019-05-22 14:27:26",
+                                    "lon": 116.35023922466557,
+                                    "lat": 39.958677806812446
+                                },
+                                {
+                                    "date_time": "2019-05-22 14:37:00",
+                                    "lon": 116.35023922466557,
+                                    "lat": 39.958677806812446
+                                }]
+                 */
                 var path=[];
-                for(var i=0;i<info.length;i++){
-                    path.push({'lng':parseFloat(info[i].lon.toFixed(6)),'lat':parseFloat(info[i].lat.toFixed(6))});
-                    console.log(path[i].lng)
-                    console.log(typeof path[i].lng)
+                for(var i=0;i<result.data.length;i++){
+                    path.push({'lon':parseFloat(result.data[i].lon.toFixed(6)),'lat':parseFloat(result.data[i].lat.toFixed(6))});
+                    console.log(path[i].lon)
+                    console.log(typeof path[i].lon)
                 }
-                //alert(path[0].lng);
                 var point = [];
                 for (var i = 0; i < path.length; i++) {
-                    point.push(new BMapGL.Point(path[i].lng, path[i].lat));
-                    console.log(typeof path[i].lng)
+                    point.push(new BMapGL.Point(path[i].lon, path[i].lat));
+                    console.log(typeof path[i].lon)
                 }
-
-                // for(var i=0;i<info.length;i++){
-                //     point.push(new BMapGL.Point(info[i].lon.toFixed(6),info[i].lat.toFixed(6)))
-                // }
-                //point.push(new BMapGL.Point(116.404,39.915))
-                // for(var i=0;i<point.length;i++){
-                //     if(point[i].lat==0)
-                //         alert("yes");
-                // }
-                // alert(point[point.length-1].lat)
                 var pl=new BMapGL.Polyline(point);
                 var trackAni = new BMapGLLib.TrackAnimation(map, pl, {
                     overallView: true, // 动画完成后自动调整视野到总览
@@ -94,12 +75,10 @@
                     delay: 3000        // 动画开始的延迟，默认0，单位ms
                 });
                 trackAni.start();
-                //trackAni.cancel();
             },
             error:function (){
-                alert("error")
-            },
-            dataType:"json"
+
+            }
         });
     }
 </script>
@@ -155,7 +134,7 @@
 <!--        //第一个实例-->
 <!--        table.render({-->
 <!--            elem: '#disasterPredictionTb',-->
-<!--            url: 'http://localhost:10002/v1/personTrace',-->
+<!--            url: 'http://localhost:10002/v1/getLonAndLatByTbUserId',-->
 <!--            page: true,-->
 <!--            toolbar: '#toolbarDemo',-->
 <!--            defaultToolbar: ['filter', 'exports', 'print'],-->

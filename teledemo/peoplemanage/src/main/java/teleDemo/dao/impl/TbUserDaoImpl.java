@@ -68,7 +68,7 @@ public class TbUserDaoImpl implements TbUserDao {
         String sql = "select * from eqe.tb_user where 1=1";
         //!=,==可能会写成=从而引发bug，因此null作为左值
         if (null != candidates) {
-            if (candidates.getId() > 0) {
+            if (0 < candidates.getId()) {
                 sql += " And id=" + candidates.getId();
             }
 
@@ -91,9 +91,8 @@ public class TbUserDaoImpl implements TbUserDao {
             List<TbUser> tbUsers = jdbcTemplate.query(sql, rowMapper);
             return tbUsers;
         } catch (Exception e) {
-            System.out.println("获取指定的用户信息失败: " + e);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -102,20 +101,18 @@ public class TbUserDaoImpl implements TbUserDao {
         int count = 0;
         try {
             count = jdbcTemplate.queryForObject(sql, Integer.class);
-        } catch (Exception e) {
-            System.out.println("查询用户信息总数失败: " + e);
         } finally {
             return count;
         }
     }
 
     @Override
-    public void updateTbUser(TbUser tbUserInfo) {
+    public void updateTbUser(TbUser tbUser) {
         String sql = "update eqe.tb_user set phone_number = ?, status=? where id = ?";
         try {
-            jdbcTemplate.update(sql, tbUserInfo.getPhoneNumber(), tbUserInfo.getStatus(), tbUserInfo.getId());
+            jdbcTemplate.update(sql, tbUser.getPhoneNumber(), tbUser.getStatus(), tbUser.getId());
         } catch (Exception e) {
-            System.out.println("修改用户信息失败: " + e);
+            throw e;
         }
     }
 
@@ -126,7 +123,7 @@ public class TbUserDaoImpl implements TbUserDao {
         try {
             number = jdbcTemplate.update(sql, id);
         } catch (Exception e) {
-            System.out.println("删除用户信息失败: " + e);
+            return false;
         }
         if (0 != number) {
             return true;
@@ -136,12 +133,12 @@ public class TbUserDaoImpl implements TbUserDao {
     }
 
     @Override
-    public void insertTbUser(TbUser tbUserInfo) {
+    public void insertTbUser(TbUser tbUser) {
         String sql = "insert into eqe.tb_user(id,phone_number,status) values(?,?,?)";
         try {
-            jdbcTemplate.update(sql, tbUserInfo.getId(), tbUserInfo.getPhoneNumber(), tbUserInfo.getStatus());
+            jdbcTemplate.update(sql, tbUser.getId(), tbUser.getPhoneNumber(), tbUser.getStatus());
         } catch (Exception e) {
-            System.out.println("增加新用户信息失败: " + e);
+            throw e;
         }
     }
 }
