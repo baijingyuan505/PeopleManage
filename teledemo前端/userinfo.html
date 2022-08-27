@@ -125,36 +125,53 @@
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
             var tr = obj.tr; //获得当前行 tr 的DOM对象
-            if(layEvent === 'del'){ //删除
-                layer.confirm('确认删除该行吗', function(index){
-                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                    layer.close(index);
-                    /*
-                        向服务端发送删除指令
-                    */
-                });
-            } else if(layEvent === 'edit'){ //编辑
-                console.log(data)
-                var d = document.getElementById('id_text');//获取id_text的节点
-                d.innerHTML = "ID:" + data.id
-                layer.open({
-                    type: 1,
-                    title: "人群信息修改",
-                    area: ['420px', '330px'],
-                    content: $("#popUpdateTbUser"),
-                });
-                setFormValue(obj,data);
+            console.log(obj)
+            switch (layEvent) {
+                case 'del':
+                    layer.confirm('确认删除该行吗', function(index){
+                        /*
+                            向服务端发送删除指令
+                        */
+                        var jsonObj = JSON.stringify({'id':data.id})
+                        $.ajax({
+                        url:'http://localhost:10002/v1/deleteTbUser',
+                        type:'POST',
+                        contentType: 'application/json;charset=utf-8',
+                        data:jsonObj,
+                        success:function (msg) {
+                            console.log("delete finished")
+                            var returnCode = msg.code;//取得返回数据（Sting类型的字符串）的信息进行取值判断
+                            console.log(msg)
+                            console.log(returnCode)
+                            if(returnCode == "200") {
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                            }else{
+                                layer.alert('删除失败');
+                            }
+                            }
+                        })
+                        layer.close(index);
+                    });
+                    break;
+                case 'edit':
+                    console.log(data)
+                    var d = document.getElementById('id_text');//获取id_text的节点
+                    d.innerHTML = "ID:" + data.id
+                    layer.open({
+                        type: 1,
+                        title: "人群信息修改",
+                        area: ['420px', '330px'],
+                        content: $("#popUpdateTbUser"),
+                    });
+                    setFormValue(obj,data);
+                    break;
+                default:
+                    break;
             }
         });
         function setFormValue(obj,data){
             form.on('submit(newData)', function(massage) {
-                // console.log(data)
-                // console.log(massage.field)
-                var newObj = new Object()
-                newObj.id = data.id
-                newObj.phoneNumber = data.phoneNumber
-                newObj.status = massage.field.status
-                var jsonObj = JSON.stringify({'id':data.id, phoneNumber: data.phoneNumber, status: massage.field.status})
+                var jsonObj = JSON.stringify({'id':data.id, 'phoneNumber': data.phoneNumber, 'status': massage.field.status})
                 console.log("ready to update")
                 $.ajax({
                     url:'http://localhost:10002/v1/updateTbUser',
