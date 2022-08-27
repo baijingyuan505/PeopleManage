@@ -31,4 +31,6 @@ public interface TbInfoService {
     List<Map<String,Object>> getLonAndLatByDateTime(String dateTime, int pageNum, int limit);
 
     List<Map<String,Object>> getLonAndLatByLac(String lac, int pageNum, int limit);
+
+    boolean checkDateTime(String dateTime);
 }
