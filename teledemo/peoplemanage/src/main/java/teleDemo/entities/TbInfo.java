@@ -27,4 +27,8 @@ public class TbInfo implements Serializable{
     private  Integer unreadSms;
     private  Integer wifiCount;
     private String wifiInfo;
+
+    public String getDateTime() {
+        return dateTime.replace(".0","");
+    }
 }

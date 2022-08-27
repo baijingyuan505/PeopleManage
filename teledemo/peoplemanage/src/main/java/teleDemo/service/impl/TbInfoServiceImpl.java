@@ -90,8 +90,9 @@ public class TbInfoServiceImpl implements TbInfoService {
         if (null == tbInfos) {
             return null;
         }
-        Map<String, Object> point = new HashMap<>();
+
         for (int i = 0; i < tbInfos.size(); i++) {
+            Map<String, Object> point = new HashMap<>();
             point.put("date_time", tbInfos.get(i).getDateTime());
             point.put("lon", tbInfos.get(i).getLon());
             point.put("lat", tbInfos.get(i).getLat());
