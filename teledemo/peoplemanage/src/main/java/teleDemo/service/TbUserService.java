@@ -14,9 +14,11 @@ public interface TbUserService {
 
     List<TbUser> getTbUserByStatus(String status, int pageNum, int limit);
 
-    List<TbUser> getTbUserByCandidates(int pageNum, int limit, TbUser candidates);
+    List<TbUser> getTbUserByCandidates( String candidates,int pageNum, int limit);
 
     int getTbUserSize();
+
+    int getTbUserSizeByCandidates(String candidates);
 
     void updateTbUser(TbUser tbUserInfo);
 

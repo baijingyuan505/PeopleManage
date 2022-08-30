@@ -12,7 +12,11 @@ import java.util.Map;
 public interface TbInfoService {
     List<TbInfo> getAllTbInfo(int pageNum, int limit);
 
+    List<TbInfo> getTbInfo(String candidates, int pageNum, int limit);
+
     int getTbInfoSize();
+
+    int getTbInfoSizeByCandidates(String candidates);
 
     TbInfo getTbInfoById(@Param("id") int id);
 
@@ -23,6 +27,8 @@ public interface TbInfoService {
     List<TbInfo> getTbInfoByLac(String lac, int pageNum, int limit);
 
     List<Map<String,Object>> getAllLonAndLat(int pageNum,int limit);
+
+    List<Map<String,Object>> getLonAndLat(String candidates,int pageNum,int limit);
 
     Map<String,Object> getLonAndLatById(@Param("id") int id);
 

@@ -20,10 +20,20 @@ public class TbInfoServiceImpl implements TbInfoService {
         return tbInfoDao.getAllTbInfo(pageNum, limit);
     }
 
+    @Override
+    public List<TbInfo> getTbInfo(String candidates, int pageNum, int limit) {
+        return tbInfoDao.getTbInfo(candidates,pageNum,limit);
+    }
+
 
     @Override
     public int getTbInfoSize() {
         return tbInfoDao.getTbInfoSize();
+    }
+
+    @Override
+    public int getTbInfoSizeByCandidates(String candidates) {
+        return tbInfoDao.getTbInfoSizeByCandidates(candidates);
     }
 
     @Override
@@ -55,6 +65,24 @@ public class TbInfoServiceImpl implements TbInfoService {
         List<Map<String, Object>> points = new ArrayList<>();
 
         List<TbInfo> tbInfos = tbInfoDao.getAllTbInfo(pageNum, limit);
+        if (null == tbInfos) {
+            return null;
+        }
+        for (int i = 0; i < tbInfos.size(); i++) {
+            Map<String, Object> point = new HashMap<>();
+            point.put("date_time", tbInfos.get(i).getDateTime());
+            point.put("lon", tbInfos.get(i).getLon());
+            point.put("lat", tbInfos.get(i).getLat());
+            points.add(point);
+        }
+        return points;
+    }
+
+    @Override
+    public List<Map<String, Object>> getLonAndLat(String candidates, int pageNum, int limit) {
+        List<Map<String, Object>> points = new ArrayList<>();
+
+        List<TbInfo> tbInfos = tbInfoDao.getTbInfo(candidates, pageNum, limit);
         if (null == tbInfos) {
             return null;
         }

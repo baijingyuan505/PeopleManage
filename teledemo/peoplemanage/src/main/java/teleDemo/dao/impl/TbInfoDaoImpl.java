@@ -1,5 +1,7 @@
 package teleDemo.dao.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,6 +12,7 @@ import teleDemo.entities.TbInfo;
 import teleDemo.entities.TbUser;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class TbInfoDaoImpl implements TbInfoDao {
@@ -36,13 +39,43 @@ public class TbInfoDaoImpl implements TbInfoDao {
         RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
 
         try {
-            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper);
-            return TbInfos;
+            List<TbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper);
+            return tbInfos;
         } catch (Exception e) {
             return null;
         }
     }
-    
+
+    @Override
+    public List<TbInfo> getTbInfo(String candidates, int pageNum, int limit) {
+        Gson gson = new Gson();
+        Map<String,Object> map = gson.fromJson(candidates,new TypeToken<Map<String, Object>>() { }.getType());
+        String sql = "select * from eqe.tb_info where 1=1";
+
+        for(String key : map.keySet()){
+            if("date_time" == key){
+                sql += " And "+key+"<="+map.get(key);
+            }
+            else {
+                sql += " And "+key+"="+map.get(key);
+            }
+        }
+
+        if (0 <= pageNum && limit > 0) {
+            //只进行有效的分页查询
+            sql += " limit " + pageNum + ", " + limit;
+        }
+
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
+
+        try {
+            List<TbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper);
+            return tbInfos;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     /**
      * 获取指定id的某条轨迹信息
@@ -56,8 +89,8 @@ public class TbInfoDaoImpl implements TbInfoDao {
         RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
 
         try {
-            TbInfo TbInfo = jdbcTemplate.queryForObject(sql, rowMapper, id);
-            return TbInfo;
+            TbInfo tbInfo = jdbcTemplate.queryForObject(sql, rowMapper, id);
+            return tbInfo;
         } catch (Exception e) {
             return null;
         }
@@ -70,7 +103,7 @@ public class TbInfoDaoImpl implements TbInfoDao {
      * @param userId
      * @param pageNum
      * @param limit
-     * @return TbInfos(TbInfo类链表)
+     * @return tbInfos(TbInfo类链表)
      */
     @Override
     public List<TbInfo> getTbInfoByTbUserId(int userId, int pageNum, int limit) {
@@ -82,8 +115,8 @@ public class TbInfoDaoImpl implements TbInfoDao {
         RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
 
         try {
-            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper, userId);
-            return TbInfos;
+            List<TbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper, userId);
+            return tbInfos;
         } catch (Exception e) {
             return null;
         }
@@ -96,7 +129,7 @@ public class TbInfoDaoImpl implements TbInfoDao {
      * @param dateTime e.g.: "2019-05-21 20:50:52"
      * @param pageNum
      * @param limit
-     * @return TbInfos(TbInfo类链表)
+     * @return tbInfos(TbInfo类链表)
      */
     @Override
     public List<TbInfo> getTbInfoByDateTime(String dateTime, int pageNum, int limit) {
@@ -107,8 +140,8 @@ public class TbInfoDaoImpl implements TbInfoDao {
         }
         RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
         try {
-            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper, dateTime);
-            return TbInfos;
+            List<TbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper, dateTime);
+            return tbInfos;
         } catch (Exception e) {
             return null;
         }
@@ -120,7 +153,7 @@ public class TbInfoDaoImpl implements TbInfoDao {
      * @param lac     e.g. "4157"
      * @param pageNum
      * @param limit
-     * @return TbInfos(TbInfo类链表)
+     * @return tbInfos(TbInfo类链表)
      */
     @Override
     public List<TbInfo> getTbInfoByLac(String lac, int pageNum, int limit) {
@@ -131,8 +164,8 @@ public class TbInfoDaoImpl implements TbInfoDao {
         }
         RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
         try {
-            List<TbInfo> TbInfos = jdbcTemplate.query(sql, rowMapper, lac);
-            return TbInfos;
+            List<TbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper, lac);
+            return tbInfos;
         } catch (Exception e) {
             return null;
         }
@@ -146,6 +179,28 @@ public class TbInfoDaoImpl implements TbInfoDao {
     @Override
     public int getTbInfoSize() {
         String sql = "select count(*) from eqe.tb_info";
+        int count = 0;
+        try {
+            count = jdbcTemplate.queryForObject(sql, Integer.class);
+        } finally {
+            return count;
+        }
+    }
+
+    @Override
+    public int getTbInfoSizeByCandidates(String candidates) {
+        Gson gson = new Gson();
+        Map<String,Object> map = gson.fromJson(candidates,new TypeToken<Map<String, Object>>() { }.getType());
+        String sql = "select count(*) from eqe.tb_info where 1=1";
+
+        for(String key : map.keySet()){
+            if("date_time" == key){
+                sql += " And "+key+"<="+map.get(key);
+            }
+            else {
+                sql += " And "+key+"="+map.get(key);
+            }
+        }
         int count = 0;
         try {
             count = jdbcTemplate.queryForObject(sql, Integer.class);

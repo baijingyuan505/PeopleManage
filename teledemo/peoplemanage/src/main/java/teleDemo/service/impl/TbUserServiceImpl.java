@@ -29,13 +29,18 @@ public class TbUserServiceImpl implements TbUserService {
     }
 
     @Override
-    public List<TbUser> getTbUserByCandidates(int pageNum, int limit, TbUser candidates) {
-        return tbUserDao.getTbUserByCandidates(pageNum,limit,candidates);
+    public List<TbUser> getTbUserByCandidates(String candidates, int pageNum, int limit) {
+        return tbUserDao.getTbUserByCandidates(candidates,pageNum,limit);
     }
 
     @Override
     public int getTbUserSize() {
         return tbUserDao.getTbUserSize();
+    }
+
+    @Override
+    public int getTbUserSizeByCandidates(String candidates) {
+        return tbUserDao.getTbUserSizeByCandidates(candidates);
     }
 
     @Override

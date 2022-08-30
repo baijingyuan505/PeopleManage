@@ -1,5 +1,7 @@
 package teleDemo.dao.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import teleDemo.dao.TbUserDao;
 import teleDemo.entities.TbUser;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class TbUserDaoImpl implements TbUserDao {
@@ -64,21 +68,13 @@ public class TbUserDaoImpl implements TbUserDao {
     }
 
     @Override
-    public List<TbUser> getTbUserByCandidates(int pageNum, int limit, TbUser candidates) {
+    public List<TbUser> getTbUserByCandidates(String candidates,int pageNum, int limit) {
+        Gson gson = new Gson();
+        Map<String,Object> map = gson.fromJson(candidates,new TypeToken<Map<String, Object>>() { }.getType());
         String sql = "select * from eqe.tb_user where 1=1";
-        //!=,==可能会写成=从而引发bug，因此null作为左值
-        if (null != candidates) {
-            if (0 < candidates.getId()) {
-                sql += " And id=" + candidates.getId();
-            }
 
-            if (null != candidates.getStatus()) {
-                sql += " And status=" + candidates.getStatus();
-            }
-
-            if (null != candidates.getPhoneNumber()) {
-                sql += " And phone_number=" + candidates.getPhoneNumber();
-            }
+        for(String key : map.keySet()){
+            sql += " And "+key+"="+map.get(key);
         }
 
         if (0 <= pageNum && limit > 0) {
@@ -86,6 +82,7 @@ public class TbUserDaoImpl implements TbUserDao {
             sql += " limit " + pageNum + ", " + limit;
         }
 
+        System.out.println("int dao: "+sql);
         RowMapper<TbUser> rowMapper = new BeanPropertyRowMapper<>(TbUser.class);
         try {
             List<TbUser> tbUsers = jdbcTemplate.query(sql, rowMapper);
@@ -98,6 +95,23 @@ public class TbUserDaoImpl implements TbUserDao {
     @Override
     public int getTbUserSize() {
         String sql = "select count(*) from eqe.tb_user";
+        int count = 0;
+        try {
+            count = jdbcTemplate.queryForObject(sql, Integer.class);
+        } finally {
+            return count;
+        }
+    }
+
+    @Override
+    public int getTbUserSizeByCandidates(String candidates) {
+        Gson gson = new Gson();
+        Map<String,Object> map = gson.fromJson(candidates,new TypeToken<Map<String, Object>>() { }.getType());
+        String sql = "select count(*) from eqe.tb_user where 1=1";
+
+        for(String key : map.keySet()){
+            sql += " And "+key+"="+map.get(key);
+        }
         int count = 0;
         try {
             count = jdbcTemplate.queryForObject(sql, Integer.class);
