@@ -47,7 +47,7 @@
             contentType: "application/json",
             dataType: "json",
             success:function (result){
-                
+                /*
                    var path = [{
                                     "date_time": "2019-05-22 14:27:26",
                                     "lon": 116.35023922466557,
@@ -58,13 +58,13 @@
                                     "lon": 119.35023922466557,
                                     "lat": 43.958677806812446
                                 }]
-                
-                // var path=[];
-                // for(var i=0;i<result.data.length;i++){
-                //     path.push({'lon':parseFloat(result.data[i].lon.toFixed(6)),'lat':parseFloat(result.data[i].lat.toFixed(6))});
-                //     console.log(path[i].lon)
-                //     console.log(typeof path[i].lon)
-                // }
+                */
+                var path=[];
+                for(var i=0;i<result.data.length;i++){
+                    path.push({'lon':parseFloat(result.data[i].lon.toFixed(6)),'lat':parseFloat(result.data[i].lat.toFixed(6))});
+                    console.log(path[i].lon)
+                    console.log(typeof path[i].lon)
+                }
                 var point = [];
                 for (var i = 0; i < path.length; i++) {
                     point.push(new BMapGL.Point(path[i].lon, path[i].lat));
