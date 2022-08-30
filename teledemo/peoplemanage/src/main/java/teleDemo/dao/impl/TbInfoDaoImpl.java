@@ -36,6 +36,7 @@ public class TbInfoDaoImpl implements TbInfoDao {
             //只进行有效的分页查询
             sql += " limit " + pageNum + ", " + limit;
         }
+        System.out.println(sql);
         RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
 
         try {
