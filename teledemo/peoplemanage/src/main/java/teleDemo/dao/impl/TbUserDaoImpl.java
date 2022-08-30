@@ -74,7 +74,7 @@ public class TbUserDaoImpl implements TbUserDao {
         String sql = "select * from eqe.tb_user where 1=1";
 
         for(String key : map.keySet()){
-            sql += " And "+key+"="+map.get(key);
+            sql += " And "+key+"=\""+map.get(key)+"\"";
         }
 
         if (0 <= pageNum && limit > 0) {
@@ -82,7 +82,6 @@ public class TbUserDaoImpl implements TbUserDao {
             sql += " limit " + pageNum + ", " + limit;
         }
 
-        System.out.println("int dao: "+sql);
         RowMapper<TbUser> rowMapper = new BeanPropertyRowMapper<>(TbUser.class);
         try {
             List<TbUser> tbUsers = jdbcTemplate.query(sql, rowMapper);
@@ -110,7 +109,7 @@ public class TbUserDaoImpl implements TbUserDao {
         String sql = "select count(*) from eqe.tb_user where 1=1";
 
         for(String key : map.keySet()){
-            sql += " And "+key+"="+map.get(key);
+            sql += " And "+key+"=\""+map.get(key)+"\"";
         }
         int count = 0;
         try {

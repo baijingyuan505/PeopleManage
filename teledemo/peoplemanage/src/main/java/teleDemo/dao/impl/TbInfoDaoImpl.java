@@ -53,11 +53,11 @@ public class TbInfoDaoImpl implements TbInfoDao {
         String sql = "select * from eqe.tb_info where 1=1";
 
         for(String key : map.keySet()){
-            if("date_time" == key){
-                sql += " And "+key+"<="+map.get(key);
+            if("date_time".equals(key)){
+                sql += " And "+key+"<=\""+map.get(key)+"\"";
             }
             else {
-                sql += " And "+key+"="+map.get(key);
+                sql += " And "+key+"=\""+map.get(key)+"\"";
             }
         }
 
@@ -194,11 +194,11 @@ public class TbInfoDaoImpl implements TbInfoDao {
         String sql = "select count(*) from eqe.tb_info where 1=1";
 
         for(String key : map.keySet()){
-            if("date_time" == key){
-                sql += " And "+key+"<="+map.get(key);
+            if("date_time".equals(key)){
+                sql += " And "+key+"<=\""+map.get(key)+"\"";
             }
             else {
-                sql += " And "+key+"="+map.get(key);
+                sql += " And "+key+"=\""+map.get(key)+"\"";
             }
         }
         int count = 0;
