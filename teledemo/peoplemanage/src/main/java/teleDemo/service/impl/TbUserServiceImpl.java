@@ -12,6 +12,7 @@ import java.util.List;
 public class TbUserServiceImpl implements TbUserService {
     @Autowired
     TbUserDao tbUserDao;
+
     @Override
     public List<TbUser> getAllTbUser(int pageNum, int limit) {
         return tbUserDao.getAllTbUser(pageNum, limit);
@@ -20,17 +21,17 @@ public class TbUserServiceImpl implements TbUserService {
 
     @Override
     public List<TbUser> getTbUserByPhoneNumber(String phoneNumber, int pageNum, int limit) {
-        return tbUserDao.getTbUserByPhoneNumber(phoneNumber,pageNum,limit);
+        return tbUserDao.getTbUserByPhoneNumber(phoneNumber, pageNum, limit);
     }
 
     @Override
     public List<TbUser> getTbUserByStatus(String status, int pageNum, int limit) {
-        return tbUserDao.getTbUserByStatus(status,pageNum,limit);
+        return tbUserDao.getTbUserByStatus(status, pageNum, limit);
     }
 
     @Override
     public List<TbUser> getTbUserByCandidates(String candidates, int pageNum, int limit) {
-        return tbUserDao.getTbUserByCandidates(candidates,pageNum,limit);
+        return tbUserDao.getTbUserByCandidates(candidates, pageNum, limit);
     }
 
     @Override

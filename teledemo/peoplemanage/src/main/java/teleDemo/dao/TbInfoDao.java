@@ -21,6 +21,7 @@ public interface TbInfoDao {
     int getTbInfoSize();
 
     int getTbInfoSizeByCandidates(String candidates);
+
     void updateTbInfo(TbInfo tbInfo);
 
     boolean deleteTbInfo(int id);

@@ -38,26 +38,27 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        
+
         List<TbInfo> tbInfos = tbInfoService.getAllTbInfo((page - 1) * limit, limit);
         int count = tbInfoService.getTbInfoSize();
 
         if (null == tbInfos) {
             return Result.createFailureResult("查询所有轨迹信息失败");
         }
-        return Result.createSuccessResult(count,tbInfos);
+        return Result.createSuccessResult(count, tbInfos);
     }
 
 
     /**
      * 查询特定的轨迹信息
+     *
      * @param tbInfo
      * @param request
      * @return
      */
     @PostMapping("/v1/getTbInfo")
     @ResponseBody
-    public Result getTbInfoById(@Valid @RequestBody TbInfo tbInfo,HttpServletRequest request) {
+    public Result getTbInfoById(@Valid @RequestBody TbInfo tbInfo, HttpServletRequest request) {
         int limit = 100;
         int page = 1;
         if (request.getParameter("limit") != null) {
@@ -67,17 +68,18 @@ public class teleinfoController {
             page = Integer.valueOf(request.getParameter("page"));
         }
 
-        List<TbInfo> tbInfos = tbInfoService.getTbInfo(tbInfo.toString(),(page - 1) * limit, limit);
+        List<TbInfo> tbInfos = tbInfoService.getTbInfo(tbInfo.toString(), (page - 1) * limit, limit);
         int count = tbInfoService.getTbInfoSizeByCandidates(tbInfo.toString());
 
         if (null == tbInfos) {
             return Result.createFailureResult("查询特定轨迹信息失败");
         }
-        return Result.createSuccessResult(count,tbInfos);
+        return Result.createSuccessResult(count, tbInfos);
     }
 
     /**
      * 按ID获取某一条轨迹信息
+     *
      * @param tbInfo
      * @return
      */
@@ -89,7 +91,7 @@ public class teleinfoController {
         if (null == tbInfo1) {
             return Result.createFailureResult("获取指定id的经纬度信息失败");
         }
-        return Result.createSuccessResult(1,tbInfo1);
+        return Result.createSuccessResult(1, tbInfo1);
     }
 
     /**
@@ -115,11 +117,12 @@ public class teleinfoController {
         if (null == points) {
             return Result.createFailureResult("分页获取所有经纬度信息失败");
         }
-        return Result.createSuccessResult(count,points);
+        return Result.createSuccessResult(count, points);
     }
 
     /**
      * 分页获取特定的经纬度信息
+     *
      * @param tbInfo
      * @param request
      * @return
@@ -136,13 +139,13 @@ public class teleinfoController {
             page = Integer.valueOf(request.getParameter("page"));
         }
 
-        List<Map<String, Object>> points = tbInfoService.getLonAndLat(tbInfo.toString(),(page - 1) * limit, limit);
+        List<Map<String, Object>> points = tbInfoService.getLonAndLat(tbInfo.toString(), (page - 1) * limit, limit);
         int count = tbInfoService.getTbInfoSizeByCandidates(tbInfo.toString());
 
         if (null == points) {
             return Result.createFailureResult("分页获取特定经纬度信息失败");
         }
-        return Result.createSuccessResult(count,points);
+        return Result.createSuccessResult(count, points);
     }
 
     /**
@@ -159,11 +162,12 @@ public class teleinfoController {
         if (null == point) {
             return Result.createFailureResult("获取指定id的经纬度信息失败");
         }
-        return Result.createSuccessResult(1,point);
+        return Result.createSuccessResult(1, point);
     }
 
     /**
      * POST
+     *
      * @param tbInfo
      * @param request
      * @return
@@ -179,20 +183,13 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        //List<Map<String, Object>> points = tbInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
+        List<Map<String, Object>> points = tbInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
         int count = tbInfoService.getTbInfoSizeByCandidates(tbInfo.toString());
-        List<Map<String, Object>> points = new ArrayList<>();
-        //判断是否需要处理数据，正常就一样，如果传入deal就执行兰kf写的
-        if (request.getParameter("deal") != null) {
-            limit=-1;
-            points = tbInfoService.getDealedLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
-        }else{
-            points = tbInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
-        }
+
         if (null == points) {
             return Result.createFailureResult("分页获取指定用户id的经纬度信息失败");
         }
-        return Result.createSuccessResult(count,points);
+        return Result.createSuccessResult(count, points);
     }
 
     /**
@@ -219,7 +216,7 @@ public class teleinfoController {
         if (null == points) {
             return Result.createFailureResult("分页获取指定日期之前的经纬度信息失败");
         }
-        return Result.createSuccessResult(count,points);
+        return Result.createSuccessResult(count, points);
     }
 
     /**
@@ -245,7 +242,7 @@ public class teleinfoController {
         if (null == points) {
             return Result.createFailureResult("分页获取指定地区编码的经纬度信息失败");
         }
-        return Result.createSuccessResult(count,points);
+        return Result.createSuccessResult(count, points);
     }
 
     /**
@@ -273,7 +270,7 @@ public class teleinfoController {
         if (null == tbUsers) {
             return Result.createFailureResult("查询所有用户信息失败");
         }
-        return Result.createSuccessResult(count,tbUsers);
+        return Result.createSuccessResult(count, tbUsers);
     }
 
     /**
@@ -296,14 +293,14 @@ public class teleinfoController {
         }
 
 
-        List<TbUser> tbUsers = tbUserService.getTbUserByCandidates(tbUser.toString(),(page - 1) * limit, limit);
+        List<TbUser> tbUsers = tbUserService.getTbUserByCandidates(tbUser.toString(), (page - 1) * limit, limit);
         int count = tbUserService.getTbUserSizeByCandidates(tbUser.toString());
 
         if (null == tbUsers) {
             return Result.createFailureResult("查询用户失败");
         }
 
-        return Result.createSuccessResult(count,tbUsers);
+        return Result.createSuccessResult(count, tbUsers);
     }
 
     /**

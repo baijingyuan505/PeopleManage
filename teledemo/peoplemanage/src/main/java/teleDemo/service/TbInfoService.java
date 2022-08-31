@@ -26,20 +26,19 @@ public interface TbInfoService {
 
     List<TbInfo> getTbInfoByLac(String lac, int pageNum, int limit);
 
-    List<Map<String,Object>> getAllLonAndLat(int pageNum,int limit);
+    List<Map<String, Object>> getAllLonAndLat(int pageNum, int limit);
 
-    List<Map<String,Object>> getLonAndLat(String candidates,int pageNum,int limit);
+    List<Map<String, Object>> getLonAndLat(String candidates, int pageNum, int limit);
 
-    Map<String,Object> getLonAndLatById(@Param("id") int id);
+    Map<String, Object> getLonAndLatById(@Param("id") int id);
 
-    List<Map<String,Object>> getLonAndLatByTbUserId(int tbUserId, int pageNum, int limit);
-    
-      //lan
-    List<Map<String, Object>> getDealedLonAndLatByTbUserId(int tbUserId, int pageNum, int limit);
+    List<Map<String, Object>> getLonAndLatByTbUserId(int tbUserId, int pageNum, int limit);
 
-    List<Map<String,Object>> getLonAndLatByDateTime(String dateTime, int pageNum, int limit);
+    List<Map<String, Object>> getLonAndLatByDateTime(String dateTime, int pageNum, int limit);
 
-    List<Map<String,Object>> getLonAndLatByLac(String lac, int pageNum, int limit);
+    List<Map<String, Object>> getLonAndLatByLac(String lac, int pageNum, int limit);
 
     boolean checkDateTime(String dateTime);
+
+    String noNullDateTime(String sql);
 }
