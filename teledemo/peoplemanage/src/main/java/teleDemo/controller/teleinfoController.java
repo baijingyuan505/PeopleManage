@@ -185,9 +185,9 @@ public class teleinfoController {
         //判断是否需要处理数据，正常就一样，如果传入deal就执行兰kf写的
         if (request.getParameter("deal") != null) {
             limit=-1;
-            points = TbInfoService.getDealedLonAndLatByTbUserId(TbInfo.getUserId(), (page - 1) * limit, limit);
+            points = tbInfoService.getDealedLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
         }else{
-            points = TbInfoService.getLonAndLatByTbUserId(TbInfo.getUserId(), (page - 1) * limit, limit);
+            points = tbInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
         }
         if (null == points) {
             return Result.createFailureResult("分页获取指定用户id的经纬度信息失败");
