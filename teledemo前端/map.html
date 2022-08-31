@@ -29,111 +29,142 @@
     <div class="up-map-div">
         <input class="layui-input" style="BACKGROUND-COLOR: transparent; float:left; width: 280px;" type="text" placeholder="输入要查询轨迹的用户id" id="userid_query">
         <button type="button" class="layui-btn" style="width: 70px;" value="查询输入id用户的行动轨迹" onclick="query()">查询</button>
-        <textarea name="desc" placeholder="时间   经度   纬度   地址" class="layui-textarea" id="info_show"></textarea>
     </div>
 </body>
 </html>
 <script type="text/javascript">
-    var map = new BMapGL.Map("allmap");//地图
-    var point_init=new BMapGL.Point(116.404, 39.915);//初始坐标中心
-    map.centerAndZoom(point_init, 6);//缩放为6
-    map.enableScrollWheelZoom(true);//可滚轮缩放
-    var point = [];//存储坐标点
-    var i=0;//记录当前执行第几个坐标
-    var time=[];//各个坐标对应是时间
-    var geocoder = new BMapGL.Geocoder();//编码器
+    var map=new BMapGL.Map("allmap");
+    map.centerAndZoom(new BMapGL.Point(116.404,39.915),5);
+    map.enableScrollWheelZoom(true);
 
-    //查询
-    function query() {
-        var userid = document.getElementById("userid_query").value;//获取文本框的用户id
+
+    function query(){
+        var userid=document.getElementById("userid_query").value;
         $.ajax({
-            url: "http://localhost:10002/v1/getLonAndLatByTbUserId?deal=1",
+            url: "http://localhost:10002/v1/getLonAndLatByTbUserId",
             type: "POST",
             data: JSON.stringify({"userId": userid}),
             contentType: "application/json",
             dataType: "json",
-            //处理返回值
-            success: function (result) {
-                var path = [];//临时存储返回值，做格式化
-                for (var i = 0; i < result.data.length; i++) {
-                    path.push({
-                        'lon': parseFloat(result.data[i].lon.toFixed(6)),//保留小数点后6位
-                        'lat': parseFloat(result.data[i].lat.toFixed(6)),
-                        'date_time':result.data[i].date_time
-                    });
-                    console.log(path[i].date_time)
-                    // console.log(path[i].lat)
-                    // console.log(typeof path[i].lon)
+            success:function (result){
+                /*
+                   var path = [{
+                                    "date_time": "2019-05-22 14:27:26",
+                                    "lon": 116.35023922466557,
+                                    "lat": 39.958677806812446
+                                },
+                                {
+                                    "date_time": "2019-05-22 15:37:00",
+                                    "lon": 119.35023922466557,
+                                    "lat": 43.958677806812446
+                                }]
+                */
+                var path=[];
+                for(var i=0;i<result.data.length;i++){
+                    path.push({'lon':parseFloat(result.data[i].lon.toFixed(6)),'lat':parseFloat(result.data[i].lat.toFixed(6))});
+                    console.log(path[i].lon)
+                    console.log(typeof path[i].lon)
                 }
-                //分别存进各个点坐标及时间
+                var point = [];
                 for (var i = 0; i < path.length; i++) {
                     point.push(new BMapGL.Point(path[i].lon, path[i].lat));
-                    time.push(path[i].date_time);
+                    console.log(typeof path[i].lon)
                 }
-                //根据点综合调整视角大小，位置
-                var view=map.getViewport(eval(point));
-                var mapZoom=view.zoom;
-                var centerPoint=view.center;
-                map.centerAndZoom(centerPoint,mapZoom);
-                //显示第一个点
-                var marker = new BMapGL.Marker(point[0]);        // 创建标注
-                marker.setTitle("起点")
-                //marker.setIcon(new BMapGL.Icon("./images/pin_green.png",new BMapGL.Size(30,30)))
-                marker.setLabel(new BMapGL.Label("起点"))
-                map.addOverlay(marker)
-
-                show_datetime(0);
-                //延迟执行画线
-                setTimeout("drawLine()",2000);
-
-                // var trackAni = new BMapGLLib.TrackAnimation(map, pl, {
-                //     overallView: true, // 动画完成后自动调整视野到总览
-                //     tilt: 30,          // 轨迹播放的角度，默认为55
-                //     duration: 20000,   // 动画持续时长，默认为10000，单位ms
-                //     delay: 3000        // 动画开始的延迟，默认0，单位ms
-                // });
-                // trackAni.start();
+                var pl=new BMapGL.Polyline(point);
+                var trackAni = new BMapGLLib.TrackAnimation(map, pl, {
+                    overallView: true, // 动画完成后自动调整视野到总览
+                    tilt: 30,          // 轨迹播放的角度，默认为55
+                    duration: 20000,   // 动画持续时长，默认为10000，单位ms
+                    delay: 3000        // 动画开始的延迟，默认0，单位ms
+                });
+                trackAni.start();
             },
-            error: function () {
+            error:function (){
 
             }
         });
     }
-    //画线，连接i，和i+1之间的线
-    function drawLine() {
-        if(i<point.length-1){
-            //定义线类
-            var pl = new BMapGL.Polyline([point[i],point[i+1]],{strokeColor:"blue",strokeWeight:2,strokeOpacity:0.5});
-            map.addOverlay(pl);//绘制
-
-            console.log(point[i].lng)
-            console.log(point[i].lat)
-            //画下一条
-            i=i+1;
-            //补充刚画的这条线的终点信息
-            var index=i;
-            show_datetime(index)
-            //画下一条
-            setTimeout("drawLine()",100)
-        }
-        else if(i=point.length-1){
-            var marker = new BMapGL.Marker(point[i]);        // 创建标注
-            marker.setTitle("终点")
-            marker.setLabel(new BMapGL.Label("终点"))
-            map.addOverlay(marker)
-        }
-    }
-    //补充详细信息
-    function show_datetime(index){
-        //构造点，直接用point[index]可能会因为index作用域问题导致出错
-        var p=new BMapGL.Point(point[index].lng,point[index].lat);
-        geocoder.getLocation(p,function(geocoderResult,LocationOptions){
-            console.log(geocoderResult.address)
-            var textaere=document.getElementById("info_show");//获取文本域对象
-            var message=textaere.value;//获取已有的信息
-            //在这基础上补充这个点的信息，包括详细地址文字信息
-            message="No."+index+" : "+time[index]+"    "+point[index].lng+"    "+point[index].lat+"   "+geocoderResult.address+"\n"+message;
-            textaere.value=message;//赋值
-        });
-    }
 </script>
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+
+<!--<head>-->
+<!--    <meta charset="utf-8">-->
+<!--    <title>预测记录信息</title>-->
+<!--    <meta name="renderer" content="webkit">-->
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">-->
+<!--    <link rel="stylesheet" href="./layui/css/layui.css" media="all">-->
+<!--    <link rel="stylesheet" href="./css/font.css">-->
+<!--    <link rel="stylesheet" href="./css/xadmin.css">-->
+<!--    <script type="text/javascript" src="./js/xadmin.js"></script>-->
+<!--    &lt;!&ndash; 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 &ndash;&gt;-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--&lt;!&ndash;    <form class="layui-form" action="">-->
+<!--        <div class="layui-btn-group demoTable">-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent1" onClick="return false">最近24小时</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent2" onClick="return false">最近7天</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent3" onClick="return false">最近1个月</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent4" onClick="return false">最近6个月</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent5" onClick="return false">最近1年</button>-->
+<!--            <button type="submit" class="layui-btn" lay-submit="" lay-filter="recent6" onClick="return false">全部</button>-->
+<!--        </div>-->
+<!--    </form> &ndash;&gt;-->
+
+<!--<table id="disasterPredictionTb" lay-filter="disasterPredictionTb"></table>-->
+<!--<div class="layui-card-header">-->
+<!--    &lt;!&ndash; <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button> &ndash;&gt;-->
+<!--    &lt;!&ndash; <button class="layui-btn" onclick="xadmin.open('添加预测数据','./disasterPredictionInfo-add.html',1200,600)"><i class="layui-icon"></i>添加</button> &ndash;&gt;-->
+<!--</div>-->
+
+<!--<script type="text/html" id="barDemo">-->
+<!--    &lt;!&ndash; <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> &ndash;&gt;-->
+<!--    // <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
+<!--    // <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+<!--</script>-->
+<!--<script type="text/html" id="pictureTpl">-->
+<!--    <a href="{{d.picture}}" target="_blank" class="layui-table-link">查看图片</a>-->
+<!--</script>-->
+<!--<script src="./layui/layui.js" charset="utf-8"></script>-->
+<!--&lt;!&ndash; 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 &ndash;&gt;-->
+<!--<script>-->
+<!--    layui.use('table', function(){-->
+<!--        var table = layui.table;-->
+
+<!--        //第一个实例-->
+<!--        table.render({-->
+<!--            elem: '#disasterPredictionTb',-->
+<!--            url: 'http://localhost:10002/v1/getLonAndLatByTbUserId',-->
+<!--            page: true,-->
+<!--            toolbar: '#toolbarDemo',-->
+<!--            defaultToolbar: ['filter', 'exports', 'print'],-->
+<!--            cols: [-->
+<!--                [-->
+<!--                    //{type:'checkbox', fixed: 'left'},-->
+<!--                    {-->
+<!--                        field: 'date_time',-->
+<!--                        title: '时间',-->
+<!--                        width: 350,-->
+<!--                        sort: true,-->
+<!--                        fixed: true-->
+<!--                    }, {-->
+<!--                    field: 'lat',-->
+<!--                    title: '纬度',-->
+<!--                    width: 200-->
+<!--                }, {-->
+<!--                    field: 'lon',-->
+<!--                    title: '经度',-->
+<!--                    width: 200-->
+<!--                }-->
+<!--                ]-->
+<!--            ]-->
+<!--        });-->
+
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+
+<!--</html>-->

@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostVo<T>{
+public class PostVo<T> {
     private int code;
     private String msg;
     private List<T> data;

@@ -20,13 +20,13 @@ public class TbUser implements Serializable {
     private String status;
 
     @Override
-    public String toString(){
+    public String toString() {
         Gson gson = new Gson();
-        Map<String,Object> tbUserMap = new HashMap<>();
+        Map<String, Object> tbUserMap = new HashMap<>();
 
-        tbUserMap.put("id",id);
-        tbUserMap.put("phone_number",phoneNumber);
-        tbUserMap.put("status",status);
+        tbUserMap.put("id", id);
+        tbUserMap.put("phone_number", phoneNumber);
+        tbUserMap.put("status", status);
 
         //Gson转化时会自动忽略值为null的键值对，非常人性化
         return gson.toJson(tbUserMap);
