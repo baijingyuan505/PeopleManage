@@ -154,4 +154,9 @@ public class TbUserDaoImpl implements TbUserDao {
             throw e;
         }
     }
+
+    @Override
+    public String addSqlSuffix(String sql) {
+        return null;
+    }
 }

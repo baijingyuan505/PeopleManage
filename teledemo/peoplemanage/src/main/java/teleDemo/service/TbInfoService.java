@@ -40,5 +40,5 @@ public interface TbInfoService {
 
     boolean checkDateTime(String dateTime);
 
-    String noNullDateTime(String sql);
+    List<Map<String, Object>> getDealedLonAndLatByTbUser(String userCandidates,int pageNum, int limit);
 }

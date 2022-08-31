@@ -180,7 +180,16 @@ public class TbInfoServiceImpl implements TbInfoService {
     }
 
     @Override
-    public String noNullDateTime(String sql) {
-        return sql + "where date_time != null";
+    public List<Map<String, Object>> getDealedLonAndLatByTbUser(String userCandidates,int pageNum,int limit) {
+        List<Map<String, Object>> points = new ArrayList<>();
+        List<TbInfo> tbInfos=tbInfoDao.getTbInfoByTbUser(userCandidates,pageNum,limit);
+        for(TbInfo tbInfo :tbInfos){
+            Map<String, Object> point = new HashMap<>();
+            point.put("date_time", tbInfo.getDateTime());
+            point.put("lon", tbInfo.getLon());
+            point.put("lat", tbInfo.getLat());
+            points.add(point);
+        }
+        return points;
     }
 }

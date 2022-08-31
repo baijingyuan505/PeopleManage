@@ -22,4 +22,6 @@ public interface TbUserDao {
     boolean deleteTbUser(int id);
 
     void insertTbUser(TbUser tbUserInfo);
+
+    String addSqlSuffix(String sql);
 }
