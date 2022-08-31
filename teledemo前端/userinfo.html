@@ -95,7 +95,7 @@
                 return {
                     'code': 0, //接口状态
                     'msg': res.msg, //提示文本
-                    'count': res.data.length, //数据长度
+                    'count': res.count, //数据长度
                     'data': res.data //数据列表，是直接填充进表格中的数组
                 }
             },
@@ -148,7 +148,7 @@
                         style: 'background-color: #fff; border-style:solid; border-color: #999'
                     },
                     {
-                        field: '操作',
+                        title: '操作',
                         fixed: true,
                         width: 400,
                         align:'center',
