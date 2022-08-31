@@ -41,4 +41,6 @@ public interface TbInfoService {
     boolean checkDateTime(String dateTime);
 
     List<Map<String, Object>> getDealedLonAndLatByTbUser(String userCandidates,int pageNum, int limit);
+
+    List<Map<String, Object>> getDealedLonAndLatByTbUserId(int tbUserId, int pageNum, int limit);
 }

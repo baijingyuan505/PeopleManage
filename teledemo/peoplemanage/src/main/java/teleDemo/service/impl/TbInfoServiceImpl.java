@@ -192,4 +192,32 @@ public class TbInfoServiceImpl implements TbInfoService {
         }
         return points;
     }
+
+    @Override
+    public List<Map<String, Object>> getDealedLonAndLatByTbUserId(int tbUserId, int pageNum, int limit) {
+        List<Map<String, Object>> points = new ArrayList<>();
+        List<TbInfo> tbInfos = tbInfoDao.getTbInfoByTbUserId(tbUserId, pageNum, limit);
+        if (null == tbInfos) {
+            return null;
+        }
+        double lon=0;
+        double lat=0;
+        for (int i = 0; i < tbInfos.size(); i++) {
+            if(tbInfos.get(i).getLon()==lon&&tbInfos.get(i).getLat()==lat)//放弃不变点
+                continue;
+            //放弃差距过大的点
+            if(lon!=0&&lat!=0&&Math.abs(tbInfos.get(i).getLon()-lon)>0.001&&Math.abs(tbInfos.get(i).getLat()-lat)>0.001)
+                continue;
+            Map<String, Object> point = new HashMap<>();
+            point.put("date_time", tbInfos.get(i).getDateTime());
+            //System.out.println("No."+tbInfos.get(i).getDateTime());
+            point.put("lon", tbInfos.get(i).getLon());
+            point.put("lat", tbInfos.get(i).getLat());
+            points.add(point);
+            lat=tbInfos.get(i).getLat();
+            lon=tbInfos.get(i).getLon();
+
+        }
+        return points;
+    }
 }

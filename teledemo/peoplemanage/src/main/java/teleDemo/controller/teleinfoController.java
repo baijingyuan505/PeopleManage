@@ -183,9 +183,14 @@ public class teleinfoController {
         if (request.getParameter("page") != null) {
             page = Integer.valueOf(request.getParameter("page"));
         }
-        List<Map<String, Object>> points = tbInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
+        List<Map<String, Object>> points;
+        if (request.getParameter("deal") != null) {
+            limit=-1;
+            points = tbInfoService.getDealedLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
+        }else{
+            points = tbInfoService.getLonAndLatByTbUserId(tbInfo.getUserId(), (page - 1) * limit, limit);
+        }
         int count = tbInfoService.getTbInfoSizeByCandidates(tbInfo.toString());
-
         if (null == points) {
             return Result.createFailureResult("分页获取指定用户id的经纬度信息失败");
         }
