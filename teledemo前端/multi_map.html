@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <link rel="stylesheet" href="./css/trace.css">
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=UR1k4PEQGBqCWOTbxv0GcAPmfqM9ywFu
+"></script>
+    <script type="text/javascript" src="//api.map.baidu.com/library/TrackAnimation/src/TrackAnimation_min.js"></script>
+    <title>Title</title>
+    <script src="./js/jquery.min.js"></script>
+    <script>
+
+    </script>
+</head>
+
+<body>
+<div id="allmap"></div>
+<div class="up-map-div">
+    <input class="layui-input" style="BACKGROUND-COLOR: transparent; float:left; width: 280px;" type="text" placeholder="输入要查询轨迹的用户id" id="status_query">
+    <button type="button" class="layui-btn" style="width: 70px;" value="查询输入id用户的行动轨迹" onclick="query()">查询</button>
+    <textarea name="desc" placeholder="时间   经度   纬度   地址" class="layui-textarea" id="info_show"></textarea>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+    var map = new BMapGL.Map("allmap");//地图
+    var point_init=new BMapGL.Point(116.404, 39.915);//初始坐标中心
+    map.centerAndZoom(point_init, 6);//缩放为6
+    map.enableScrollWheelZoom(true);//可滚轮缩放
+    var point = [];//存储坐标点
+    var status_int=0;
+    var color;
+    var color2;
+
+    //查询
+    function query() {
+        var status = document.getElementById("status_query").value;//获取文本框的用户id
+        $.ajax({
+            //url: "http://localhost:10002/v1/getLonAndLatByTbUser",
+            url: "http://121.40.187.89:10002/v1/getLonAndLatByTbUserId?deal=1",
+            type: "POST",
+            //data: JSON.stringify({"status": status}),
+            data: JSON.stringify({"userId": 2}),
+            contentType: "application/json",
+            dataType: "json",
+            //处理返回值
+            success: function (result) {
+                status_int=parseInt(status);
+                console.log(typeof status_int)
+                switch (status_int) {
+                    case 0: color="./images/green.png";break;
+                    case 1: color="./images/red.png";break;
+                    case 2: color="#FFA000";break;
+                    case 3: color="#FFF000";break;
+                }
+                switch (status_int) {
+                    case 0: color2="#00FF00";break;
+                    case 1: color2="#FF0000";break;
+                    case 2: color2="#FFA000";break;
+                    case 3: color2="#FFF000";break;
+                }
+                //console.log(result.data[0].lon)
+                var path = [];//临时存储返回值，做格式化
+                for (var i = 0; i < result.data.length; i++) {
+                    path.push({
+                        'lon': parseFloat(result.data[i].lon.toFixed(6)),//保留小数点后6位
+                        'lat': parseFloat(result.data[i].lat.toFixed(6)),
+                        'date_time':result.data[i].date_time
+                    });
+                }
+
+                //分别存进各个点坐标及时间
+                for (var i = 0; i < path.length; i++) {
+                    point.push(new BMapGL.Point(path[i].lon, path[i].lat));
+                }
+                //根据点综合调整视角大小，位置
+                var view=map.getViewport(eval(point));
+                var mapZoom=view.zoom;
+                var centerPoint=view.center;
+                map.centerAndZoom(centerPoint,mapZoom);
+
+                for (var i = 0; i < path.length; i++) {
+                    drawCircle2(i);
+                }
+
+            },
+            error: function () {
+
+            }
+        });
+    }
+    function drawCircle(i) {
+        console.log(point[i].lng)
+        var marker = new BMapGL.Marker(point[i]);        // 创建标注
+        marker.setIcon(new BMapGL.Icon(color,new BMapGL.Size(30,30)));
+        marker.setTitle("lon:"+point[i].lng+"\nlat:"+point[i].lat)
+        map.addOverlay(marker)
+    }
+    function drawCircle2(i) {
+        var circle=new BMapGL.Circle(point[i],100,{fillColor:color2,strokeOpacity:0})
+        map.addOverlay(circle);
+    }
+
+</script>
