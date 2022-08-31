@@ -245,4 +245,9 @@ public class TbInfoDaoImpl implements TbInfoDao {
             throw e;
         }
     }
+
+    @Override
+    public String addSqlSuffix(String sql) {
+        return sql + "where date_time is not null";
+    }
 }

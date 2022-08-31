@@ -27,4 +27,6 @@ public interface TbInfoDao {
     boolean deleteTbInfo(int id);
 
     void insertTbInfo(TbInfo tbInfo);
+
+   String addSqlSuffix(String sql);
 }

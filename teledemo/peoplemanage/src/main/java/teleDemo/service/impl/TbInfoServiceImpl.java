@@ -178,9 +178,4 @@ public class TbInfoServiceImpl implements TbInfoService {
             return false;
         }
     }
-
-    @Override
-    public String noNullDateTime(String sql) {
-        return sql + "where date_time != null";
-    }
 }
