@@ -172,6 +172,33 @@ public class TbInfoDaoImpl implements TbInfoDao {
         }
     }
 
+    @Override
+    public List<TbInfo> getTbInfoByTbUser(String userCandidates, int pageNum, int limit) {
+        Gson gson = new Gson();
+        Map<String,Object> map = gson.fromJson(userCandidates,new TypeToken<Map<String, Object>>() { }.getType());
+        String sql = "select * from eqe.tb_info where user_id in (select id from eqe.tb_user where 1=1";
+        for(String key : map.keySet()){
+            if("date_time".equals(key)){
+                sql += " And "+key+"<=\""+map.get(key)+"\"";
+            }
+            else {
+                sql += " And "+key+"=\""+map.get(key)+"\"";
+            }
+        }
+        sql += ")";
+        if (0 <= pageNum && limit > 0) {
+            //只进行有效的分页查询
+            sql += " limit " + pageNum + ", " + limit;
+        }
+        RowMapper<TbInfo> rowMapper = new BeanPropertyRowMapper<>(TbInfo.class);
+        try {
+            List<TbInfo> tbInfos = jdbcTemplate.query(sql, rowMapper);
+            return tbInfos;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /**
      * 获取tb_info表中的数据总数量
      *

@@ -345,4 +345,23 @@ public class teleinfoController {
         tbUserService.insertTbUser(userInfo);
         return this.getAllTbUser(request);
     }
+
+    @PostMapping("/v1/getLonAndLatByTbUser")
+    @ResponseBody
+    public Result getLonAndLatByTbUser(@Valid @RequestBody TbUser tbUser,HttpServletRequest request) {
+        int limit = 10;
+        int page = 1;
+        if (request.getParameter("limit") != null) {
+            limit = Integer.valueOf(request.getParameter("limit"));
+        }
+        if (request.getParameter("page") != null) {
+            page = Integer.valueOf(request.getParameter("page"));
+        }
+        System.out.println("In controller"+tbUser.toString());
+        List<Map<String, Object>> points = tbInfoService.getDealedLonAndLatByTbUser(tbUser.toString(),(page - 1) * limit, limit);
+        if (null == points) {
+            return Result.createFailureResult("分页获取指定用户们的经纬度信息失败");
+        }
+        return Result.createSuccessResult(points.size(),points);
+    }
 }

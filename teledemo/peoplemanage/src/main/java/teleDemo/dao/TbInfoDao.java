@@ -18,6 +18,8 @@ public interface TbInfoDao {
 
     List<TbInfo> getTbInfoByLac(String lac, int pageNum, int limit);
 
+    List<TbInfo> getTbInfoByTbUser(String userCandidates, int pageNum, int limit);
+
     int getTbInfoSize();
 
     int getTbInfoSizeByCandidates(String candidates);
