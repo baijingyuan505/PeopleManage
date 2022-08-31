@@ -147,7 +147,7 @@
                 </executions>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
-                    <mainClass>com.earthquake.managementPlatform.dataBackup6005</mainClass>
+                    <mainClass>teleDemo.peopleManage10002</mainClass>
                 </configuration>
             </plugin>
         </plugins>
