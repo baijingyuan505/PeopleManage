@@ -8,3 +8,23 @@
     border:1px rgb(181, 181, 190);
     background-color:#ffffffb3;
 }
+.up-map-div3{
+    width:440px;
+    height:37px;
+    top:30px;
+    left:30px;
+    position:absolute;
+    z-index:9999;
+    border:1px rgb(181, 181, 190);
+    background-color:#ffffffb3;
+}
+.up-map-div2{
+    width:700px;
+    height:10px;
+    top:30px;
+    left:600px;
+    position:absolute;
+    z-index:9999;
+    border:1px rgb(181, 181, 190);
+    background-color:#ffffffb3;
+}

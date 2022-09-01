@@ -26,10 +26,10 @@
 
 <body>
 <div id="allmap"></div>
-<div class="up-map-div">
-    <input class="layui-input" style="BACKGROUND-COLOR: transparent; float:left; width: 280px;" type="text" placeholder="输入要查询轨迹的人群状态" id="status_query">
-    <button type="button" class="layui-btn" style="width: 70px;" value="输入要查询轨迹的人群状态" onclick="query()">查询</button>
-    <textarea name="desc" placeholder="时间   经度   纬度   地址" class="layui-textarea" id="info_show"></textarea>
+<div class="up-map-div3">
+    <input class="layui-input" style="BACKGROUND-COLOR: transparent; float:left; width: 280px;" type="text" placeholder="输入要查询轨迹的某状态用户用户" id="status_query">
+    <button type="button" class="layui-btn" style="width: 70px;" value="查询输入的状态用户轨迹" onclick="query()">查询</button>
+    <button type="button" class="layui-btn" style="width: 70px;" value="清空已显示的轨迹" onclick="clearMap()">清空</button>
 </div>
 </body>
 </html>
@@ -49,7 +49,7 @@
         var status = document.getElementById("status_query").value;//获取文本框的status
         $.ajax({
             //url: "http://localhost:10002/v1/getLonAndLatByTbUser",
-            url: "http://localhost:10002/v1/getLonAndLatByTbUser?limit=0",
+            url: "http://localhost:10002/v1/getLonAndLatByTbUser?limit=1000",
             type: "POST",
             //data: JSON.stringify({"status": status}),
             data: JSON.stringify({"status": status}),
@@ -57,47 +57,55 @@
             dataType: "json",
             //处理返回值
             success: function (result) {
-                status_int=parseInt(status);
-                console.log(typeof status_int)
-                switch (status_int) {
-                    case 0: color="./images/green.png";break;
-                    case 1: color="./images/red.png";break;
-                    case 2: color="#FFA000";break;
-                    case 3: color="#FFF000";break;
-                }
-                switch (status_int) {
-                    case 0: color2="#00FF00";break;
-                    case 1: color2="#FF0000";break;
-                    case 2: color2="#FFA000";break;
-                    case 3: color2="#FFF000";break;
-                }
-                //console.log(result.data[0].lon)
-                var path = [];//临时存储返回值，做格式化
-                for (var i = 0; i < result.data.length; i++) {
-                    path.push({
-                        'lon': parseFloat(result.data[i].lon.toFixed(6)),//保留小数点后6位
-                        'lat': parseFloat(result.data[i].lat.toFixed(6)),
-                        'date_time':result.data[i].date_time
-                    });
-                }
+                if(result.data.length<=0){
+                    alert("没有该状态人群数据，请重新查询")
 
-                //分别存进各个点坐标及时间
-                for (var i = 0; i < path.length; i++) {
-                    point.push(new BMapGL.Point(path[i].lon, path[i].lat));
                 }
-                //根据点综合调整视角大小，位置
-                var view=map.getViewport(eval(point));
-                var mapZoom=view.zoom;
-                var centerPoint=view.center;
-                map.centerAndZoom(centerPoint,mapZoom);
+                else{
+                    point = [];//存储坐标点
+                    status_int=parseInt(status);
+                    console.log(typeof status_int)
+                    switch (status_int) {
+                        case 0: color="./images/green.png";break;
+                        case 1: color="./images/red.png";break;
+                        case 2: color="./images/orange.png";break;
+                        case 3: color="./images/yellow.png";break;
+                    }
+                    switch (status_int) {
+                        case 0: color2="#00FF00";break;
+                        case 1: color2="#FF0000";break;
+                        case 2: color2="#FFA000";break;
+                        case 3: color2="#FFF000";break;
+                    }
+
+                    //console.log(result.data[0].lon)
+                    var path = [];//临时存储返回值，做格式化
+                    for (var i = 0; i < result.data.length; i++) {
+                        path.push({
+                            'lon': parseFloat(result.data[i].lon.toFixed(6)),//保留小数点后6位
+                            'lat': parseFloat(result.data[i].lat.toFixed(6)),
+                            'date_time':result.data[i].date_time
+                        });
+                    }
+
+                    //分别存进各个点坐标及时间
+                    for (var i = 0; i < path.length; i++) {
+                        point.push(new BMapGL.Point(path[i].lon, path[i].lat));
+                    }
+                    //根据点综合调整视角大小，位置
+                    var view=map.getViewport(eval(point));
+                    var mapZoom=view.zoom;
+                    var centerPoint=view.center;
+                    map.centerAndZoom(centerPoint,mapZoom);
 
 
-                for (var i = 1; i < path.length-1; i++) {
-                    drawCircle(i);
+                    for (var i = 1; i < path.length-1; i++) {
+                        drawCircle(i);
+                    }
                 }
             },
             error: function () {
-                document.getElementById("status_query").setAttribute()
+                alert("查询失败");
             }
         });
     }
@@ -111,6 +119,10 @@
     function drawCircle2(i) {
         var circle=new BMapGL.Circle(point[i],100,{fillColor:color2,strokeOpacity:0})
         map.addOverlay(circle);
+    }
+    function clearMap() {
+        map.clearOverlays();
+        point = [];//存储坐标点
     }
 
 </script>

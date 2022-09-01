@@ -29,7 +29,9 @@
 <div class="up-map-div">
     <input class="layui-input" style="BACKGROUND-COLOR: transparent; float:left; width: 280px;" type="text" placeholder="输入要查询轨迹的用户id" id="userid_query">
     <button type="button" class="layui-btn" style="width: 70px;" value="查询输入id用户的行动轨迹" onclick="query()">查询</button>
-    <textarea name="desc" placeholder="时间   经度   纬度   地址" class="layui-textarea" id="info_show"></textarea>
+</div>
+<div class="up-map-div2">
+    <textarea name="desc" placeholder="               时间                       经度                纬度                地址" class="layui-textarea" id="info_show"></textarea>
 </div>
 </body>
 </html>
@@ -54,6 +56,7 @@
             dataType: "json",
             //处理返回值
             success: function (result) {
+                initial();
                 var path = [];//临时存储返回值，做格式化
                 for (var i = 0; i < result.data.length; i++) {
                     path.push({
@@ -98,6 +101,14 @@
 
             }
         });
+    }
+    function initial() {
+        var textaere=document.getElementById("info_show");//获取文本域对象
+        textaere.value="               时间                       经度                纬度                地址";
+        map.clearOverlays();
+        point = [];//存储坐标点
+        i=0;//记录当前执行第几个坐标
+        time=[];//各个坐标对应是时间
     }
     //画线，连接i，和i+1之间的线
     function drawLine() {
