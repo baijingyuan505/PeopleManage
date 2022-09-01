@@ -48,8 +48,8 @@
     function query() {
         var status = document.getElementById("status_query").value;//获取文本框的status
         $.ajax({
-            //url: "http://localhost:10002/v1/getLonAndLatByTbUser",
-            url: "http://localhost:10002/v1/getLonAndLatByTbUser?limit=1000",
+            //url: "http://121.40.187.89:10002/v1/getLonAndLatByTbUser",
+            url: "http://121.40.187.89:10002/v1/getLonAndLatByTbUser?limit=1000",
             type: "POST",
             //data: JSON.stringify({"status": status}),
             data: JSON.stringify({"status": status}),

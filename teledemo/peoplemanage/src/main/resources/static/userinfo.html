@@ -88,7 +88,7 @@
         var form = layui.form
         table.render({
             elem: '#disasterPredictionTb',
-            url: 'http://localhost:10002/v1/getAllTbUser',
+            url: 'http://121.40.187.89:10002/v1/getAllTbUser',
             method: 'GET',
             parseData: function (res) {
                 // console.log(res)
@@ -192,7 +192,7 @@
                         */
                         var jsonObj = JSON.stringify({'id':data.id})
                         $.ajax({
-                        url:'http://localhost:10002/v1/deleteTbUser',
+                        url:'http://121.40.187.89:10002/v1/deleteTbUser',
                         type:'POST',
                         contentType: 'application/json;charset=utf-8',
                         data:jsonObj,
@@ -233,7 +233,7 @@
                 var jsonObj = JSON.stringify({'id':inputdata.userID, 'phoneNumber': inputdata.userPhoneNumber, 'status': inputdata.status})
                 console.log(jsonObj)
                 $.ajax({
-                    url:'http://localhost:10002/v1/insertTbUser',
+                    url:'http://121.40.187.89:10002/v1/insertTbUser',
                     type:'POST',
                     contentType: 'application/json;charset=utf-8',
                     data:jsonObj,
@@ -250,7 +250,7 @@
                 var jsonObj = JSON.stringify({'id':data.id, 'phoneNumber': data.phoneNumber, 'status': massage.field.status})
                 console.log("ready to update")
                 $.ajax({
-                    url:'http://localhost:10002/v1/updateTbUser',
+                    url:'http://121.40.187.89:10002/v1/updateTbUser',
                     type:'POST',
                     contentType: 'application/json;charset=utf-8',
                     data:jsonObj,

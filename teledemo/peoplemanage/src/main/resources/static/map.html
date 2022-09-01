@@ -49,7 +49,7 @@
     function query() {
         var userid = document.getElementById("userid_query").value;//获取文本框的用户id
         $.ajax({
-            url: "http://localhost:10002/v1/getLonAndLatByTbUserId?deal=1",
+            url: "http://121.40.187.89:10002/v1/getLonAndLatByTbUserId?deal=1",
             type: "POST",
             data: JSON.stringify({"userId": userid}),
             contentType: "application/json",
